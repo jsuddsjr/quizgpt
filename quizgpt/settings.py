@@ -80,9 +80,13 @@ WSGI_APPLICATION = 'quizgpt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-MONGODB_DATABASES = {'default': {'name': 'django_mongoengine'}}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
-DATABASES = {'default': {'ENGINE': 'django.db.backends.dummy'}}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

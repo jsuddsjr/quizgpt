@@ -30,6 +30,13 @@ pytest-cov = "^4.1.0"
 pytest-django = "^4.5.2"
 pytest-sugar = "^0.9.7"
 
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
