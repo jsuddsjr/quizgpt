@@ -3,21 +3,28 @@ name = "quizgpt"
 version = "0.1.0"
 description = "Instantly create quizzes on every subject under the sun with the power of Chat-GPT."
 authors = ["John Sudds <jsuddsjr@users.noreply.github.com>"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Environment :: Web Environment",
+    "Framework :: Django :: 4",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Education :: Computer Aided Instruction (CAI)"
+]
 license = "MIT"
 readme = "README.md"
 packages = [
     {include = "quizgpt"}
 ]
 
-[tool.poetry.scripts]
-
-
 [tool.poetry.dependencies]
 python = "^3.11"
 Django = "^4.2.5"
 
-[tool.poetry.dev-dependencies]
-poetry = "^1.6.1"
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.2"
 
 [build-system]
 requires = ["poetry-core"]
