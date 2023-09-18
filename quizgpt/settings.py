@@ -10,23 +10,30 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
+import dotenv
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Add .env variables anywhere before SECRET_KEY
+dotenv.load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-46bvnrt&=h%g*j%w1a*cqqtbp=gf*@%c)h(#u(xm%c4#^yv_r7'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ['ENV'] == 'dev'
 
 ALLOWED_HOSTS = []
 
+ADMINS = (
+    ('John Sudds', 'jsuddsjr@byui.edu')
+)
 
 # Application definition
 
@@ -73,13 +80,9 @@ WSGI_APPLICATION = 'quizgpt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+MONGODB_DATABASES = {'default': {'name': 'django_mongoengine'}}
 
+DATABASES = {'default': {'ENGINE': 'django.db.backends.dummy'}}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
