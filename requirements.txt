@@ -34,7 +34,7 @@ pyrsistent==0.19.3
 pytest==7.4.2
 pywin32-ctypes==0.2.2
 -e git+https://github.com/jsuddsjr/quizgpt.git@72aa5357cb409b9362e5bf71eae14c4fb50d2ab9#egg=quizgpt
-rapidfuzz==2.15.1
+rapidfuzz==3.3.0
 requests==2.31.0
 requests-toolbelt==1.0.0
 shellingham==1.5.3
