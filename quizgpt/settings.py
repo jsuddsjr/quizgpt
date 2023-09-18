@@ -10,15 +10,18 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+# Add .env variables anywhere before SECRET_KEY
 import os
 import dotenv
+dotenv.load_dotenv()
+
+from django.core.management.commands.runserver import Command as runserver
+runserver.default_port = '3000'
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Add .env variables anywhere before SECRET_KEY
-dotenv.load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
