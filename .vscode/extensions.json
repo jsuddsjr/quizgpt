@@ -1,0 +1,6 @@
+{
+    "recommendations": [
+        "ms-python.isort",
+        "tamasfe.even-better-toml"
+    ]
+}

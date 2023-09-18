@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "quizgpt"
+version = "0.1.0"
+description = "Instantly create quizzes on every subject under the sun with the power of Chat-GPT."
+authors = ["John Sudds <jsuddsjr@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [
+    {include = "quizgpt"}
+]
+
+[tool.poetry.scripts]
+
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Django = "^4.2.5"
+
+[tool.poetry.dev-dependencies]
+poetry = "^1.6.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
