@@ -35,6 +35,20 @@
             "group": "test"
         },
         {
+            "label": "startapp (Django)",
+            "type": "process",
+            "command": ".venv/Scripts/python.exe",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "args": [
+                "manage.py",
+                "startapp",
+                "${input:appName}"
+            ],
+            "group": "test"
+        },
+        {
             "label": "makemessages (Django)",
             "type": "process",
             "command": ".venv/Scripts/python.exe",
@@ -74,6 +88,11 @@
         },
     ],
     "inputs": [
+        {
+            "id": "appName",
+            "type": "promptString",
+            "description": "Enter the new app name:"
+        },
         {
             "id": "command",
             "type": "pickString",

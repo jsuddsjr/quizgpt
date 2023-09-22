@@ -15,12 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-
-from . import views
+from django.urls import path, include
+from django.views import debug
 
 admin.autodiscover()
 urlpatterns = [
-    path("hello/", views.hello),
+    path("", debug.default_urlconf),
+    path("api/openai", include("openai.urls")),
     path("admin/", admin.site.urls),
 ]
