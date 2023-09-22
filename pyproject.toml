@@ -11,30 +11,24 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Programming Language :: Python :: 3.11",
-    "Topic :: Education :: Computer Aided Instruction (CAI)"
+    "Topic :: Education :: Computer Aided Instruction (CAI)",
 ]
 license = "MIT"
 readme = "README.md"
-packages = [ {include = "quizgpt"} ]
+packages = [{ include = "quizgpt" }]
 
 [tool.poetry.dependencies]
-django = "^4.2.5"
-mongoengine = "^0.27.0"
-pymongo = "^4.5.0"
-python = "^3.11"
-python-dotenv = "^1.0.0"
-
-[tool.poetry.group.test.dependencies]
-pytest = "^7.4.2"
-pytest-cov = "^4.1.0"
+black         = "^23.9.1"
+Django        = "^4.2.5"
+pytest        = "^7.4.2"
 pytest-django = "^4.5.2"
-pytest-sugar = "^0.9.7"
-
-[tool.poetry.group.dev.dependencies]
-black = "^23.9.1"
+python        = "^3.11"
+python-dotenv = "^1.0.0"
+poetry = "^1.6.1"
+mypy = "^1.5.1"
 
 [build-system]
-requires = ["poetry-core"]
+requires      = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
