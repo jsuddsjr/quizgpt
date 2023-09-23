@@ -20,12 +20,13 @@ packages = [{ include = "quizgpt" }]
 [tool.poetry.dependencies]
 black         = "^23.9.1"
 Django        = "^4.2.5"
+mypy          = "^1.5.1"
+openai        = "^0.28.0"
+poetry        = "^1.6.1"
 pytest        = "^7.4.2"
 pytest-django = "^4.5.2"
 python        = "^3.11"
 python-dotenv = "^1.0.0"
-poetry = "^1.6.1"
-mypy = "^1.5.1"
 
 [build-system]
 requires      = ["poetry-core"]

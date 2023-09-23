@@ -21,6 +21,6 @@ from django.views import debug
 admin.autodiscover()
 urlpatterns = [
     path("", debug.default_urlconf),
-    path("api/openai", include("openai.urls")),
+    ## path("api/openai", include("openai.urls")),
     path("admin/", admin.site.urls),
 ]
