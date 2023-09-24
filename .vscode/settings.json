@@ -8,6 +8,7 @@
         "dotenv",
         "openai",
         "pymongo",
+        "quizdata",
         "quizgpt"
     ]
 }
