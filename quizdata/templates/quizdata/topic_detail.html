@@ -1,0 +1,22 @@
+{% extends 'base.html' %} {% block content %}
+  <p>{{ object.topic_text }}</p>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Subtopic</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for topic in object.subtopics %}
+        <tr>
+          <th scope="row">{{ topic.slug }}</th>
+          <td>
+            <a href="{{ topic.get_absolute_url }}">{{ topic.topic_text }}</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

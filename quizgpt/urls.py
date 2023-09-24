@@ -14,7 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
+from django.contrib import admin, auth
 from django.urls import path, include
 from django.views import debug
 
@@ -22,7 +22,8 @@ admin.autodiscover()
 urlpatterns = [
     ## path("", debug.default_urlconf),
     ## path("api/openai", include("openai.urls")),
-    path("", include("quizdata.urls")),
     path("admin/", admin.site.urls),
+    path("accounts/", include("django.contrib.auth.urls")),
     path("__debug__/", include("debug_toolbar.urls")),
+    path("", include("quizdata.urls")),
 ]

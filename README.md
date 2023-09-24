@@ -28,6 +28,7 @@ Here's a list of websites that I found helpful in this project.
 
 * [Django documentation](https://docs.djangoproject.com/en/4.2/)
 * [Introduction to Custom Actions and Bulk Actions in Django](https://dev.to/ahmed__elboshi/introduction-to-custom-actions-and-bulk-actions-in-django-4bgd)
+* [How to Use Django's Built-In User Authentication Views and Forms](https://vegibit.com/how-to-use-djangos-built-in-user-authentication-views-and-forms/)
 * [BootstrapCDN](https://www.bootstrapcdn.com/bootswatch/)
 * [openai-cookbook](https://github.com/openai/openai-cookbook/)
 

@@ -1,5 +1,5 @@
 {% extends 'base.html' %} {% block content %}
-  <h1>Questions</h1>
+  <h1>Topics</h1>
 
   {% if object_list %}
     <ul class="list-group">
@@ -10,6 +10,6 @@
       {% endfor %}
     </ul>
   {% else %}
-    <p class="text-warning">No questions added yet.</p>
+    <p class="text-warning">No topics added yet.</p>
   {% endif %}
 {% endblock %}
