@@ -27,6 +27,8 @@ I used the Django for Python framework to host the service,
 Here's a list of websites that I found helpful in this project.
 
 * [Django documentation](https://docs.djangoproject.com/en/4.2/)
+* [Introduction to Custom Actions and Bulk Actions in Django](https://dev.to/ahmed__elboshi/introduction-to-custom-actions-and-bulk-actions-in-django-4bgd)
+* [BootstrapCDN](https://www.bootstrapcdn.com/bootswatch/)
 * [openai-cookbook](https://github.com/openai/openai-cookbook/)
 
 ## Future Work

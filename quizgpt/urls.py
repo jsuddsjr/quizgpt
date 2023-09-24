@@ -20,7 +20,9 @@ from django.views import debug
 
 admin.autodiscover()
 urlpatterns = [
-    path("", debug.default_urlconf),
+    ## path("", debug.default_urlconf),
     ## path("api/openai", include("openai.urls")),
+    path("", include("quizdata.urls")),
     path("admin/", admin.site.urls),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]

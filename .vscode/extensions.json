@@ -1,6 +1,8 @@
 {
     "recommendations": [
         "ms-python.isort",
-        "tamasfe.even-better-toml"
+        "tamasfe.even-better-toml",
+        "formulahendry.auto-rename-tag",
+        "zaczero.bootstrap-v4-snippets"
     ]
 }

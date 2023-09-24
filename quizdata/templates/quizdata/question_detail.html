@@ -1,0 +1,27 @@
+{% extends 'quizdata/base.html' %} {% block content %}
+  <p>{{ object.question_text }}</p>
+
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Date Immunized</th>
+        <th scope="col">Vaccine Type</th>
+        <th scope="col">Disease Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for schedule in object.schedules %}
+        <tr>
+          <th scope="row">{{ schedule.position }}</th>
+          <td>
+            <a href="{{ schedule.get_absolute_url }}">{{ schedule.date_immunized }}</a>
+          </td>
+          <td>{{ schedule.vaccine_type }}</td>
+          <td>{{ schedule.disease_type }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
