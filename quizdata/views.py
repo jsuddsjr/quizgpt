@@ -1,31 +1,31 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, View
 from .models import Topic, Question, Choice
 
 
-class TopicListView(ListView):
+class TopicListView(LoginRequiredMixin, ListView):
     model = Topic
 
     def __str__(self):
         return "Topic List"
 
 
-class TopicDetailView(DetailView):
+class TopicDetailView(LoginRequiredMixin, DetailView):
     model = Topic
 
     def __str__(self):
         return self.get_object()
 
 
-# Create your views here.
-class QuestionListView(ListView):
+class QuestionListView(LoginRequiredMixin, ListView):
     model = Question
 
     def __str__(self):
         return "Question List"
 
 
-class QuestionDetailView(DetailView):
+class QuestionDetailView(LoginRequiredMixin, DetailView):
     model = Question
 
     def __str__(self):
