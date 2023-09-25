@@ -1,27 +1,15 @@
-{% extends 'base.html' %} {% block content %}
-  <p>{{ object.question_text }}</p>
-
-
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Date Immunized</th>
-        <th scope="col">Vaccine Type</th>
-        <th scope="col">Disease Type</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for schedule in object.schedules %}
-        <tr>
-          <th scope="row">{{ schedule.position }}</th>
-          <td>
-            <a href="{{ schedule.get_absolute_url }}">{{ schedule.date_immunized }}</a>
-          </td>
-          <td>{{ schedule.vaccine_type }}</td>
-          <td>{{ schedule.disease_type }}</td>
-        </tr>
+<div class="card text-white border-primary">
+  <div class="card-header">
+    <span class="badge badge-primary text-uppercase">{{ topic.topic_text }}</span>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">{{ object.question_text }}</h5>
+    <div class="list-group">
+      {% for c in object.choice_set.all %}
+        <a href="#" class="list-group-item list-group-item-action">{{ c.choice_text }}</a>
+        {% empty %}
+        <li class="text-warning">No choices found.</li>
       {% endfor %}
-    </tbody>
-  </table>
-{% endblock %}
+    </div>
+  </div>
+</div>

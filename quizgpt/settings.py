@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.staticfiles",
     "quizdata",
+    "paper",
 ]
 
 MIDDLEWARE = [

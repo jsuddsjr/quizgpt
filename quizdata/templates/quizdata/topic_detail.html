@@ -1,22 +1,24 @@
-{% extends 'base.html' %} {% block content %}
-  <p>{{ object.topic_text }}</p>
+{% extends 'base.html' %}
 
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Subtopic</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for topic in object.subtopics %}
-        <tr>
-          <th scope="row">{{ topic.slug }}</th>
-          <td>
-            <a href="{{ topic.get_absolute_url }}">{{ topic.topic_text }}</a>
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+{% block content %}
+  <div class="card-deck">
+    {% for t in object.topic_set.all %}
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ t.topic_text }}</h5>
+          <p class="card-text">
+            <a href="{{ t.get_absolute_url }}">{{ t.topic_text }}</a>
+          </p>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-warning">No subtopics found.</p>
+    {% endfor %}
+  </div>
+
+  <div class="card-deck">
+    {% for q in object.question_set.all %}
+      {% include 'quizdata/question_detail.html' with topic=object object=q %}
+    {% endfor %}
+  </div>
 {% endblock %}

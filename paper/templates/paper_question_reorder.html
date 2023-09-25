@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% load static i18n %}
+
+{% block title %}
+  Paper Builder
+{% endblock %}
+
+{% block extracss %}
+  <style>
+    body.dragging,
+    body.dragging * {
+      cursor: move !important;
+    }
+
+    .dragged {
+      position: absolute;
+      opacity: 0.5;
+      z-index: 2000;
+    }
+
+    ol.exmaple li:hover {
+      cursor: move !important;
+    }
+
+    ol.example li.placeholder {
+      position: relative;
+      /** More li styles **/
+    }
+    ol.example li.placeholder:before {
+      position: absolute;
+      /** Define arrowhead **/
+    }
+
+    .list-group-item {
+      display: list-item;
+      list-style-position: inside;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <ol class="example list-group">
+    {% for question in questions %}
+      <li class="list-group-item" data-id="{{ question.id }}">{{ question.description }}</li>
+    {% endfor %}
+  </ol>
+{% endblock %}
+
+{% block extrajavascript %}
+  <!-- required for CSRF cookie parsing // -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sortable/0.9.13/jquery-sortable-min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+  <script>
+    // get the Django CSRF Cookie
+    $(function () {
+      var csrftoken = Cookies.get('csrftoken')
+
+      function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method)
+      }
+
+      // Ensure jQuery AJAX calls set the CSRF header to prevent security errors
+      $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader('X-CSRFToken', csrftoken)
+          }
+        }
+      })
+
+      // Make our ordered list with a class of example sortable.
+      // onDrop (reorder item) make a JSON representation of the list and POST the JSON to the current page
+      var group = $('ol.example').sortable({
+        delay: 500,
+        onDrop: function ($item, container, _super) {
+          var data = group.sortable('serialize').get()
+          var jsonString = JSON.stringify(data, null, ' ')
+          _super($item, container)
+          $.ajax({
+            type: 'POST',
+            data: jsonString,
+            url: ''
+          })
+        }
+      })
+    })
+  </script>
+{% endblock %}

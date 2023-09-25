@@ -1,32 +1,45 @@
-from django.contrib import admin
+from django.contrib.admin import TabularInline, ModelAdmin, site
 from .models import Topic, Question, Choice
+from .forms import AtLeastOneRequiredInlineFormSet
 
 
 # Register your models here.
-class ChoiceInline(admin.TabularInline):
+class ChoiceInline(TabularInline):
+    formset = AtLeastOneRequiredInlineFormSet
     model = Choice
     extra = 1
-    min_num = 2
-    ordering = "+choice_order"
+
+    def get_max_num(self, request, obj=None, **kwargs):
+        if obj and obj.question_type == "B":
+            return 1
+        return 5
 
 
-class QuestionInline(admin.StackedInline):
+class QuestionAdmin(ModelAdmin):
     model = Question
     inlines = [ChoiceInline]
 
 
-class SubtopicInline(admin.TabularInline):
+class QuestionInline(TabularInline):
+    fields = ["question_text", "question_type"]
+    model = Question
+    show_change_link = True
+
+
+class SubtopicInline(TabularInline):
     model = Topic
     fk_name = "subtopic"
     verbose_name = "Subtopic"
-    extra = 2
+    show_change_link = True
+    extra = 0
 
 
-class TopicAdmin(admin.ModelAdmin):
+class TopicAdmin(ModelAdmin):
     fields = ["topic_text", "slug"]
-    list_display = ("topic_text", "modified")
+    list_display = ["topic_text", "modified"]
     inlines = [SubtopicInline, QuestionInline]
     prepopulated_fields = {"slug": ["topic_text"]}
 
 
-admin.site.register(Topic, TopicAdmin)
+site.register(Topic, TopicAdmin)
+site.register(Question, QuestionAdmin)

@@ -15,18 +15,4 @@ class TopicDetailView(LoginRequiredMixin, DetailView):
     model = Topic
 
     def __str__(self):
-        return self.get_object()
-
-
-class QuestionListView(LoginRequiredMixin, ListView):
-    model = Question
-
-    def __str__(self):
-        return "Question List"
-
-
-class QuestionDetailView(LoginRequiredMixin, DetailView):
-    model = Question
-
-    def __str__(self):
-        return self.get_object()
+        return self.object.topic_text
