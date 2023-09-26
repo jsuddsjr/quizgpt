@@ -3,13 +3,13 @@ import openai
 from json.decoder import JSONDecoder
 
 # Create your views here.
-promptCreate = "create flashcards for {level} topics about '{topic}'. Generate 'fill in the blank. or 'multiple choice' style questions. Avoid using answer text in question."
+promptCreate = "Create 10 {level} 'multiple-choice' and 'fill-in-the-blank' questions about '{topic} {subtopic}'."
 
 
-def get_topic_questions(request, topic_text):
+def get_topic_questions(request, topic_text, subtopic_text="", level="basic"):
     messages = [
-        {"role": "system", "content": "University professor"},
-        {"role": "user", "content": promptCreate.format(level="basic", topic=topic_text)},
+        {"role": "system", "content": "Act as university professor"},
+        {"role": "user", "content": promptCreate.format(level=level, topic=topic_text, subtopic=subtopic_text)},
         {"role": "user", "content": "Respond with JSON."},
     ]
     completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages, temperature=1.1)
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     import dotenv
 
     dotenv.load_dotenv()
-    print(get_topic_questions(None, "Vue.js"))
+    print(get_topic_questions(None, "Vue.js", "databinding", "advanced"))
     # print(run_conversation(None, None))
 
 # response = openai.ChatCompletion.create(
