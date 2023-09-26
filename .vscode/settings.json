@@ -4,6 +4,7 @@
     ],
     "python.testing.pytestEnabled": true,
     "cSpell.words": [
+        "chatapi",
         "dotenv",
         "openai",
         "pymongo",
