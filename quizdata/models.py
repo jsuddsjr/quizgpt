@@ -9,7 +9,7 @@ import string
 
 # Create your models here.
 class Topic(models.Model):
-    TOPIC_LEVELS = [(1, _("Beginner")), (2, _("Intermediate")), (3, _("Advanced"))]
+    TOPIC_LEVELS = [(1, _("Basic")), (2, _("Intermediate")), (3, _("Advanced"))]
     slug = models.SlugField(unique=True)
     subtopic = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
     topic_text = models.CharField(max_length=150, help_text=_("A topic or subtopic of study."))

@@ -31,6 +31,7 @@ Here's a list of websites that I found helpful in this project.
 * [How to Use Django's Built-In User Authentication Views and Forms](https://vegibit.com/how-to-use-djangos-built-in-user-authentication-views-and-forms/)
 * [BootstrapCDN](https://www.bootstrapcdn.com/bootswatch/)
 * [openai-cookbook](https://github.com/openai/openai-cookbook/)
+* [ChatGPT and JSON Resposes: Prompting and Modifying Code-Friendly Objects](https://medium.com/@bobmain49/chatgpt-and-json-responses-prompting-modifying-code-friendly-objects-ad368822ec86)
 
 ## Future Work
 

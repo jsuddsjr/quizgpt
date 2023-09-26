@@ -25,6 +25,7 @@ urlpatterns = [
     ## path("", debug.default_urlconf),
     ## path("api/openai", include("openai.urls")),
     path("admin/", admin.site.urls),
+    path("api/", include("chatapi.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
     path("paper/", PaperQuestionReorder.as_view()),
     path("__debug__/", include("debug_toolbar.urls")),
