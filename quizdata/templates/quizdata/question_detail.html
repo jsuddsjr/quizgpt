@@ -1,15 +1,15 @@
 <div class="card text-white border-primary">
   <div class="card-header">
-    <span class="badge badge-primary text-uppercase">{{ topic.topic_text }}</span>
+    <span class="badge badge-primary text-uppercase">{{ object.topic_text }}</span>
   </div>
   <div class="card-body">
-    <h5 class="card-title">{{ object.question_text }}</h5>
-    <div class="list-group">
-      {% for c in object.choice_set.all %}
-        <a href="#" class="list-group-item list-group-item-action">{{ c|title }}</a>
-        {% empty %}
-        <li class="text-warning">No choices found.</li>
-      {% endfor %}
-    </div>
+    <h5 class="card-title">{{ q.question_text }}</h5>
+    <form method="post" target="/api/ans">
+      <div class="btn-group btn-group-toggle btn-group-lg btn-group-vertical w-100" data-toggle="buttons">
+        {% for c in q.get_randomized_choices %}
+          <label class="btn btn-outline-light"><input type="checkbox" value="{{ c.id }}" autocomplete="off" checked="" />{{ c }}</label>
+        {% endfor %}
+      </div>
+    </form>
   </div>
 </div>

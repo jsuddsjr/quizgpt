@@ -48,7 +48,7 @@ def _get_topic_subtopics(
 ) -> str:
     if topic_level:
         if topic_level == 5:
-            topic_type = "esoteric, less-known features"
+            topic_type = "esoteric, underrated" + topic_type
         prompt = promptTopicLevel.format(topic=topic_text, type=topic_type, level=topic_level, count=topic_count)
     else:
         prompt = promptTopic.format(topic=topic_text, type=topic_type, count=topic_count)
@@ -67,7 +67,7 @@ def _get_topic_subtopics(
 
 
 @login_required
-def get_topic_questions(request, topic_slug):
+def get_topic_questions(request):
     from quizdata.models import Topic
 
     if request != None:

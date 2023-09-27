@@ -1,7 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView, View
-from .models import Topic, Question, Choice
+from django.views.generic import ListView, DetailView
+from .models import Topic
 
 
 class TopicListView(LoginRequiredMixin, ListView):

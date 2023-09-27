@@ -4,7 +4,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-import string
+import random
 
 
 # Create your models here.
@@ -13,6 +13,7 @@ class Topic(models.Model):
     slug = models.SlugField(unique=True)
     subtopic = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
     topic_text = models.CharField(max_length=150, help_text=_("A topic or subtopic of study."))
+    description = models.CharField(max_length=1024, null=True, help_text=_("A brief introduction to the topic."))
     topic_level = models.IntegerField(choices=TOPIC_LEVELS, default=1)
     is_hidden = models.BooleanField(default=False, verbose_name=_("Hide from views"))
     owner = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
@@ -35,26 +36,39 @@ class Question(models.Model):
     QUESTION_TYPES = [("M", _("Multiple Choice")), ("B", _("Fill in the Blank"))]
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
     question_type = models.CharField(max_length=1, choices=QUESTION_TYPES, default="M")
-    question_text = models.TextField(help_text=_("The question."))
+    question_text = models.CharField(max_length=300, help_text=_("The question."))
     is_suppressed = models.BooleanField(null=True)
-    force_ordered = models.BooleanField(null=True)
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.question_text
 
+    def get_randomized_choices(self):
+        return sorted(self.choice_set.all(), key=lambda x: random.random())
+
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answers = models.ManyToManyField(User, through="ChoiceAnswer")
     choice_text = models.CharField(max_length=150)
-    choice_order = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     is_correct = models.BooleanField(default=False)
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ["choice_order"]
+        order_with_respect_to = "question"
 
     def __str__(self):
-        return string.ascii_lowercase[self.choice_order] + ". " + self.choice_text
+        return self.choice_text
+
+
+class ChoiceAnswer(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+    is_correct = models.BooleanField(default=False)
+    bucket = models.IntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        get_latest_by = "-created"
