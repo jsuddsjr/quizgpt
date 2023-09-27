@@ -35,8 +35,8 @@ class SubtopicInline(TabularInline):
 
 
 class TopicAdmin(ModelAdmin):
-    fields = ["topic_text", "slug"]
-    list_display = ["topic_text", "modified"]
+    fields = ["topic_text", "slug", "owner", "is_hidden"]
+    list_display = ["topic_text", "created", "modified", "owner", "is_hidden"]
     inlines = [SubtopicInline, QuestionInline]
     prepopulated_fields = {"slug": ["topic_text"]}
 

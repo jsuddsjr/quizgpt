@@ -1,19 +1,21 @@
+from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-
 import string
 
 
 # Create your models here.
 class Topic(models.Model):
-    TOPIC_LEVELS = [(1, _("Basic")), (2, _("Intermediate")), (3, _("Advanced"))]
+    TOPIC_LEVELS = [(1, _("Basic")), (2, _("Intermediate")), (3, _("Advanced")), (4, _("Expert")), (5, _("Mastery"))]
     slug = models.SlugField(unique=True)
     subtopic = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
     topic_text = models.CharField(max_length=150, help_text=_("A topic or subtopic of study."))
     topic_level = models.IntegerField(choices=TOPIC_LEVELS, default=1)
+    is_hidden = models.BooleanField(default=False, verbose_name=_("Hide from views"))
+    owner = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -54,5 +56,5 @@ class Choice(models.Model):
     class Meta:
         ordering = ["choice_order"]
 
-    def __repr__(self):
+    def __str__(self):
         return string.ascii_lowercase[self.choice_order] + ". " + self.choice_text

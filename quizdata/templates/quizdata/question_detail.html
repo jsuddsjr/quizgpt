@@ -6,7 +6,7 @@
     <h5 class="card-title">{{ object.question_text }}</h5>
     <div class="list-group">
       {% for c in object.choice_set.all %}
-        <a href="#" class="list-group-item list-group-item-action">{{ c.choice_text }}</a>
+        <a href="#" class="list-group-item list-group-item-action">{{ c }}</a>
         {% empty %}
         <li class="text-warning">No choices found.</li>
       {% endfor %}
