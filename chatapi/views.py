@@ -15,37 +15,32 @@ def get_topic_subtopics(request):
     if "topic" not in request.GET:
         return HttpResponseBadRequest(_("URL parameter 'topic' is required."))
 
-    topic_text = request.GET["topic"]
-    topic_type = "features or subtopics"
-    topic_level = 0
-    topic_count = 5
+    topic_text = request.GET.get("topic")
+    topic_type = request.GET.get("type", "features or subtopics")
+    topic_level = request.GET.get("level", 0)
+    topic_count = request.GET.get("count", 5)
 
-    if "type" in request.GET:
-        topic_type = request.GET["type"]
+    try:
+        topic_level = int(topic_level)
+    except ValueError:
+        return HttpResponseBadRequest(_("URL parameter 'level' must be integer."))
+    if not (0 <= topic_level <= 5):
+        return HttpResponseBadRequest(_("URL parameter 'level' must be in range 0 to 5."))
 
-    if "level" in request.GET:
-        try:
-            topic_level = int(request.GET["level"])
-        except ValueError:
-            return HttpResponseBadRequest(_("URL parameter 'level' must be integer."))
-        if not (0 < topic_level <= 3):
-            return HttpResponseBadRequest(_("URL parameter 'level' must be in range 1 to 5."))
-
-    if "count" in request.GET:
-        try:
-            topic_count = int(request.GET["count"])
-        except ValueError:
-            return HttpResponseBadRequest(_("URL parameter 'count' must be integer."))
-        if not (0 < topic_count <= 15):
-            return HttpResponseBadRequest(_("URL parameter 'count' must be in range 1 to 15."))
+    try:
+        topic_count = int(topic_count)
+    except ValueError:
+        return HttpResponseBadRequest(_("URL parameter 'count' must be integer."))
+    if not (0 < topic_count <= 15):
+        return HttpResponseBadRequest(_("URL parameter 'count' must be in range 1 to 15."))
 
     json_response = _get_topic_subtopics(topic_text, topic_type, topic_level, topic_count)
     return HttpResponse(json_response, content_type="application/json")
 
 
-promptTopic = "List {count} {type} of '{topic}' with estimated difficulty level: 1 is basic, 2 intermediate, and so on up to 5 levels. Include a minium of two levels in your response."
+promptTopic = "List {count} {type} of '{topic}' with brief description and estimated difficulty level: 1 is basic, 2 intermediate, and so on up to 5 levels. Response must include a minium of two levels."
 
-promptTopicLevel = "List {count} level {level} {type} of '{topic}' where level 1 is beginner and 5 is complete mastery."
+promptTopicLevel = "List {count} level {level} {type} of '{topic}' where level 1 is beginner and 5 is complete mastery. Include a brief description."
 
 
 def _get_topic_subtopics(
@@ -63,7 +58,7 @@ def _get_topic_subtopics(
         {"role": "user", "content": prompt},
         {
             "role": "assistant",
-            "content": "Format as array of JSON objects with fields 'topic' (string), 'topic_level' (number).",
+            "content": "Return ONLY JSON as array of objects with fields 'topic' (string), 'description' (string), 'topic_level' (number).",
         },
     ]
     completion = openai.ChatCompletion.create(model="gpt-3.5-turbo-0613", messages=messages)
@@ -84,7 +79,7 @@ def get_topic_questions(request, topic_slug):
         {"role": "user", "content": promptCreate.format(level=topic.topic_level, topic=topic.topic_text, subtopic="")},
         {
             "role": "assistant",
-            "content": "Format as JSON objects with fields 'question' (string), 'question_type' ('multiple-choice' or 'fill-in-the-blank'), array of 'answers' (even if only one answer), and 'answer_index' (number).",
+            "content": "Return ONLY JSON as array of objects with fields 'question' (string), 'question_type' ('multiple-choice' or 'fill-in-the-blank'), array of 'answers' (even if only one answer), and 'answer_index' (number).",
         },
     ]
     completion = openai.ChatCompletion.create(model="gpt-3.5-turbo-0613", messages=messages, temperature=1.1)
