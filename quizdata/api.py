@@ -1,11 +1,13 @@
+from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
+
 from ninja import NinjaAPI, Schema
 from ninja.security import django_auth
 from .models import Choice, ChoiceAnswer
 
 api = NinjaAPI(
     csrf=True,
-    urls_namespace="quizdata",
     title="QuizData API",
     description="This API is used to update the QuizGPT data models.",
 )
@@ -16,20 +18,30 @@ class CidSchema(Schema):
 
 
 @api.post("/ans", auth=django_auth)
-def post_answer(request, data: CidSchema):
+def post_answer(request, data: CidSchema) -> bool:
     choice = get_object_or_404(Choice, pk=data.cid)
-    last_answer = ChoiceAnswer.objects.filter(choice=choice).latest()
 
-    ## Create a record of this selection, along with current bucket.
-    answer = ChoiceAnswer(user=request.user, choice=choice)
+    question, _ = ChoiceAnswer.objects.get_or_create(
+        user_id=request.user.id, question_id=choice.question.id, choice__isnull=True
+    )
+
+    ## Move question to Leitner "box".
     if choice.is_correct:
-        answer.is_correct = True
-        answer.bucket = min(last_answer.bucket + 1, 7)
+        question.bucket = min(question.bucket + 1, 7)
     else:
-        answer.bucket = max(last_answer.bucket - 1, 1)
+        question.bucket = max(question.bucket - 1, 1)
 
+    answer, _ = ChoiceAnswer.objects.get_or_create(
+        user_id=request.user.id, question_id=choice.question.id, choice_id=choice.id
+    )
+
+    answer.is_correct = choice.is_correct
+    answer.count = answer.count + 1
+
+    question.save()
     answer.save()
-    return 204
+
+    return choice.is_correct
 
 
 class UserSchema(Schema):

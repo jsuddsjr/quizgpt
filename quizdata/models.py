@@ -50,7 +50,6 @@ class Question(models.Model):
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    answers = models.ManyToManyField(User, through="ChoiceAnswer")
     choice_text = models.CharField(max_length=150)
     is_correct = models.BooleanField(default=False)
     modified = models.DateTimeField(auto_now=True)
@@ -65,10 +64,14 @@ class Choice(models.Model):
 
 class ChoiceAnswer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
-    is_correct = models.BooleanField(default=False)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    choice = models.ForeignKey(Choice, null=True, on_delete=models.CASCADE)
     bucket = models.IntegerField(default=0)
+    count = models.IntegerField(default=0)
+    modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        get_latest_by = "-created"
+        constraints = [
+            models.UniqueConstraint(fields=["user", "question", "choice"], name="unique_user_question_choice")
+        ]

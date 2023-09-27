@@ -34,14 +34,22 @@
       async function (e) {
         e.preventDefault()
         $input = $(e.currentTarget)
+        $input.prop('disabled', true)
         $form = $(e.delegateTarget)
-        await fetch($form.attr('target'), {
+        url = $form.attr('target')
+        const response = await fetch(url, {
           method: 'POST',
           cache: 'no-cache',
           headers: { 'X-CSRFToken': '{{ csrf_token }}' },
           mode: 'same-origin',
           body: JSON.stringify({ cid: $input.val() })
         })
+        correct = await response.json()
+        if (correct) {
+          $input.parent().addClass('bg-success')
+        } else {
+          $input.parent().addClass('bg-warning')
+        }
       }
     )
   </script>
