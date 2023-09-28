@@ -11,7 +11,7 @@ import random
 class Topic(models.Model):
     TOPIC_LEVELS = [(1, _("Basic")), (2, _("Intermediate")), (3, _("Advanced")), (4, _("Expert")), (5, _("Mastery"))]
     slug = models.SlugField(unique=True)
-    subtopic = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
+    subtopic_of = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
     topic_text = models.CharField(max_length=150, help_text=_("A topic or subtopic of study."))
     description = models.CharField(max_length=1024, null=True, help_text=_("A brief introduction to the topic."))
     topic_level = models.IntegerField(choices=TOPIC_LEVELS, default=1)
@@ -51,27 +51,34 @@ class Question(models.Model):
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=150)
+    order = models.IntegerField(default=0)
     is_correct = models.BooleanField(default=False)
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        order_with_respect_to = "question"
 
     def __str__(self):
         return self.choice_text
 
 
-class ChoiceAnswer(models.Model):
+class QuestionBucket(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice = models.ForeignKey(Choice, null=True, on_delete=models.CASCADE)
     bucket = models.IntegerField(default=0)
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "question"], name="unique_user_question")]
+
+
+class AnswerHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+    question_bucket = models.ForeignKey(QuestionBucket, on_delete=models.CASCADE)
+    is_correct = models.BooleanField(default=False)
     count = models.IntegerField(default=0)
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=["user", "question", "choice"], name="unique_user_question_choice")
-        ]
+        constraints = [models.UniqueConstraint(fields=["user", "choice"], name="unique_user_choice")]

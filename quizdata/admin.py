@@ -28,7 +28,7 @@ class QuestionInline(TabularInline):
 
 class SubtopicInline(TabularInline):
     model = Topic
-    fk_name = "subtopic"
+    fk_name = "subtopic_of"
     verbose_name = "Subtopic"
     show_change_link = True
     extra = 0
