@@ -59,9 +59,9 @@ class PostAnswerResponseSchema(Schema):
 
 class PostTopicSchema(Schema):
     topic: str
-    slug: str = str(None)
-    subtopic_of: str = str(None)
-    type: str = str(None)
+    slug: str = ""
+    subtopic_of: str = ""
+    type: str = ""
     level: int = 0
     count: int = 5
 

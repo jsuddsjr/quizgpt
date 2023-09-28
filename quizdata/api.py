@@ -43,19 +43,25 @@ def post_answer(request: HttpRequest, data: PostAnswerSchema) -> PostAnswerRespo
 @api.post("/top", auth=django_auth)
 def post_topic(request: HttpRequest, data: PostTopicSchema) -> PostTopicResponseSchema:
     slug = data.slug or (slugify(data.topic) + "-" + request.user.username)
-    topic = Topic.objects.get_or_create(slug=slug)
+    topic, _ = Topic.objects.get_or_create(slug=slug, user=request.user)
+    topic.slug = slug
     topic.topic_text = data.topic
-    topic.owner = request.user
+    topic.topic_level = data.level
     topic.save()
 
     json_str = _get_topic_subtopics(data.topic)
-    for entry in json.loads(json_str):
+    blob = json.loads(json_str)
+
+    for entry in blob:
+        if entry is str:
+            entry = blob[entry]
+            continue
         subtopic = Topic.objects.create(
-            topic_text=entry.topic,
+            topic_text=entry["topic"],
             subtopic_of=topic,
-            owner=request.user,
-            description=entry.description,
-            topic_level=entry.topic_level,
+            user=request.user,
+            description=entry["description"],
+            topic_level=entry["topic_level"],
         )
         subtopic.save()
 
