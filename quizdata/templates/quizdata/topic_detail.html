@@ -1,5 +1,37 @@
 {% extends 'base.html' %}
 
+{% block extracss %}
+  <style>
+    @media (min-width: 576px) {
+      .pop {
+        width: 0;
+        height: 0;
+        animation: springOut 2s linear forwards;
+      }
+    
+      .card {
+        transition: all 1s;
+        transition-timing-function: ease-in-out;
+        transition-delay: 2s;
+      }
+    
+      @keyframes springOut {
+        0% {
+          transform: scale(1);
+          animation-timing-function: cubic-bezier(0.33333, 0.66667, 0.66667, 1);
+        }
+        69.0983% {
+          transform: scale(1.1);
+          animation-timing-function: cubic-bezier(0.33333, 0, 0.66667, 0.33333);
+        }
+        100% {
+          transform: scale(0);
+        }
+      }
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
   <div class="card-deck">
     {% for t in object.topic_set.all %}
@@ -33,10 +65,11 @@
       /** @this HTMLInputElement */
       async function (e) {
         e.preventDefault()
-        $input = $(e.currentTarget)
-        $input.prop('disabled', true)
-        $form = $(e.delegateTarget)
-        url = $form.attr('target')
+        const $input = $(e.currentTarget)
+        const $form = $(e.delegateTarget)
+        $form.prop('disabled', true)
+        $form.closest('input').prop('disabled', true)
+        const url = $form.attr('target')
         const response = await fetch(url, {
           method: 'POST',
           cache: 'no-cache',
@@ -44,12 +77,13 @@
           mode: 'same-origin',
           body: JSON.stringify({ cid: $input.val() })
         })
-        correct = await response.json()
-        if (correct) {
+        const body = await response.json()
+        if (body.correct) {
           $input.parent().addClass('bg-success')
         } else {
           $input.parent().addClass('bg-warning')
         }
+        $input.closest('.card').addClass('pop')
       }
     )
   </script>

@@ -1,9 +1,7 @@
-from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 
-from ninja import NinjaAPI, Schema
+from ninja import NinjaAPI
 from ninja.security import django_auth
 
 from chatapi.views import get_topic_subtopics
@@ -18,11 +16,11 @@ api = NinjaAPI(
 
 
 @api.post("/ans", auth=django_auth)
-def post_answer(request: HttpRequest, data: PostAnswerSchema) -> bool:
+def post_answer(request: HttpRequest, data: PostAnswerSchema) -> PostAnswerResponseSchema:
     choice = get_object_or_404(Choice, pk=data.cid)
 
     ## Move question to correct Leitner "box".
-    question, _ = QuestionBucket.objects.get_or_create(user_id=request.user.id, question_id=choice.question.id)
+    question, _ = QuestionBucket.objects.get_or_create(user=request.user, question=choice.question)
     if choice.is_correct:
         question.bucket = min(question.bucket + 1, 7)
     else:
@@ -30,14 +28,13 @@ def post_answer(request: HttpRequest, data: PostAnswerSchema) -> bool:
     question.save()
 
     ## Track how many times the answer was given.
-    answer, _ = AnswerHistory.objects.get_or_create(user_id=request.user.id, choice_id=choice.id)
+    answer, _ = AnswerHistory.objects.get_or_create(user=request.user, choice=choice, question_bucket=question)
     answer.is_correct = choice.is_correct
     answer.count = answer.count + 1
     answer.save()
 
-    all_choices = AnswerHistory.objects.filter(question_bucket=question)
-
-    return choice.is_correct
+    history = AnswerHistory.objects.filter(question_bucket=question)
+    return PostAnswerResponseSchema(correct=choice.is_correct, bucket=question, history=history)
 
 
 @api.post("/top", auth=django_auth)
@@ -55,18 +52,7 @@ def post_topic(request: HttpRequest, data: PostTopicSchema):
         subtopic.save()
 
 
-class UserSchema(Schema):
-    username: str
-    email: str
-    first_name: str
-    last_name: str
-
-
-class Error(Schema):
-    message: str
-
-
-@api.get("/me", response={200: UserSchema, 403: Error})
+@api.get("/me", response={200: UserSchema, 403: ErrorSchema})
 def me(request):
     if not request.user.is_authenticated:
         return 403, {"message": "Please sign in first"}

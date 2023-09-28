@@ -10,6 +10,10 @@ class UserSchema(ModelSchema):
         model_exclude = ["password", "last_login", "user_permissions"]
 
 
+class ErrorSchema(Schema):
+    message: str
+
+
 class TopicSchema(ModelSchema):
     class Config:
         model = Topic

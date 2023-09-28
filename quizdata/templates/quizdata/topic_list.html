@@ -1,23 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>What do you want to learn today?</h1>
+  <h1 class="display-4">What do you want to learn today?</h1>
 
-  {% if object_list %}
-    <ul class="list-group">
-      {% for object in object_list %}
-        <li class="list-group-item">
-          <a href="{{ object.get_absolute_url }}">{{ object }}</a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
-  <div class="alert alert-light text-center col-lg-8 mx-auto mt-5 rounded-lg">
+  <div class="alert alert-light text-center col-lg-8 mx-auto mb-5 rounded-lg">
     <form method="get" action="{% url 'api:subtopic' %}">
       {% csrf_token %}
       <div class="form-group">
-        <input class="w-100 bg-transparent border-top-0 border-right-0 border-left-0 border-primary display-3 text-white" type="text" placeholder="Vue.js" id="inputLarge" name="topic" />
+        <input class="w-100 bg-transparent border-top-0 border-right-0 border-left-0 border-primary display-4 text-white" type="text" placeholder="Name your topic." id="inputLarge" name="topic" />
       </div>
       <div class="btn-group btn-group-toggle my-auto" data-toggle="buttons">
         <label class="btn btn-primary active"><input type="radio" name="level" id="option1" autocomplete="off" value="1" checked="" />Basic</label>
@@ -26,4 +16,23 @@
       </div>
     </form>
   </div>
+
+  {% if object_list %}
+    <p class="text-xl-left">Or review one of these.</p>
+    <div class="row">
+      {% for topic in object_list %}
+        <div class="card border-success mb-3" style="max-width: 20rem;">
+          <div class="card-header">{{ topic }}</div>
+          <div class="card-body">
+            <h4 class="card-title">{{ topic }}</h4>
+            <p class="card-text">{{ topic.description }}</p>
+            <a class="btn btn-primary stretched-link" href="{{ topic.get_absolute_url }}">
+              <i class="fa fa-folder-open"></i>
+              Open topic
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
 {% endblock %}
