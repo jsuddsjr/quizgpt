@@ -10,15 +10,18 @@ import random
 # Create your models here.
 class Topic(models.Model):
     TOPIC_LEVELS = [(1, _("Basic")), (2, _("Intermediate")), (3, _("Advanced")), (4, _("Expert")), (5, _("Mastery"))]
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(db_index=False)
     subtopic_of = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
     topic_text = models.CharField(max_length=150, help_text=_("A topic or subtopic of study."))
     description = models.CharField(max_length=1024, null=True, help_text=_("A brief introduction to the topic."))
     topic_level = models.IntegerField(choices=TOPIC_LEVELS, default=1)
     is_hidden = models.BooleanField(default=False, verbose_name=_("Hide from views"))
-    owner = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, verbose_name=_("Owner"))
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "slug"], name="unique_user_slug")]
 
     def __str__(self):
         return self.topic_text

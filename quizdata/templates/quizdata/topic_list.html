@@ -4,15 +4,19 @@
   <h1 class="display-4">What do you want to learn today?</h1>
 
   <div class="alert alert-light text-center col-lg-8 mx-auto mb-5 rounded-lg">
-    <form method="get" action="{% url 'api:subtopic' %}">
-      {% csrf_token %}
+    <form method="get" action="/api/top" class="needs-validation clearfix" novalidate>
       <div class="form-group">
-        <input class="w-100 bg-transparent border-top-0 border-right-0 border-left-0 border-primary display-4 text-white" type="text" placeholder="Name your topic." id="inputLarge" name="topic" />
+        <input class="w-100 bg-transparent border-top-0 border-right-0 border-left-0 border-primary display-4 text-white" type="text" placeholder="Name your topic." id="inputLarge" name="topic" required />
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Topic is required.</div>
       </div>
-      <div class="btn-group btn-group-toggle my-auto" data-toggle="buttons">
-        <label class="btn btn-primary active"><input type="radio" name="level" id="option1" autocomplete="off" value="1" checked="" />Basic</label>
-        <label class="btn btn-primary"><input type="radio" name="level" id="option2" autocomplete="off" value="2" />Intermediate</label>
-        <label class="btn btn-primary"><input type="radio" name="level" id="option3" autocomplete="off" value="3" />Advanced</label>
+      <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
+        <label class="btn btn-outline-primary active"><input type="radio" name="level" id="option1" autocomplete="off" value="1" checked="" />Basic</label>
+        <label class="btn btn-outline-primary"><input type="radio" name="level" id="option2" autocomplete="off" value="2" />Intermediate</label>
+        <label class="btn btn-outline-primary"><input type="radio" name="level" id="option3" autocomplete="off" value="3" />Advanced</label>
+      </div>
+      <div class="form-group float-left">
+        <button type="submit" class="btn btn-primary">Let's go!</button>
       </div>
     </form>
   </div>
@@ -35,4 +39,57 @@
       {% endfor %}
     </div>
   {% endif %}
+{% endblock %}
+
+{% block extrajs %}
+  <script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    ;(function () {
+      'use strict'
+      window.addEventListener(
+        'load',
+        function () {
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          var forms = document.getElementsByClassName('needs-validation')
+          // Loop over them and prevent submission
+          var validation = Array.prototype.filter.call(forms, function (form) {
+            form.addEventListener(
+              'submit',
+              function (event) {
+                if (form.checkValidity() === false) {
+                  event.preventDefault()
+                  event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+              },
+              false
+            )
+          })
+        },
+        false
+      )
+    })()
+    
+    $('form').on(
+      'submit',
+      /** @this HTMLFormElement */
+      async function (e) {
+        e.preventDefault()
+        const $form = $(e.currentTarget)
+        if (!$form[0].checkValidity()) {
+          return
+        }
+        const url = $form.attr('action')
+        const props = Object.fromEntries(new FormData(this).entries())
+        const response = await fetch(url, {
+          method: 'POST',
+          cache: 'no-cache',
+          headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+          mode: 'same-origin',
+          body: JSON.stringify(props)
+        })
+        const body = await response.json()
+      }
+    )
+  </script>
 {% endblock %}

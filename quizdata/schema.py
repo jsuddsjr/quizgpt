@@ -59,11 +59,13 @@ class PostAnswerResponseSchema(Schema):
 
 class PostTopicSchema(Schema):
     topic: str
-    type: str
-    level: int
-    count: int
+    slug: str = str(None)
+    subtopic_of: str = str(None)
+    type: str = str(None)
+    level: int = 0
+    count: int = 5
 
 
 class PostTopicResponseSchema(Schema):
-    created: bool
-    subtopics: List[TopicSchema] = []
+    topic: TopicSchema
+    subtopics: List[TopicSchema]

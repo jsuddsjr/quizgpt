@@ -1,12 +1,15 @@
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
+from django.template.defaultfilters import slugify
 
 from ninja import NinjaAPI
 from ninja.security import django_auth
 
-from chatapi.views import get_topic_subtopics
+from chatapi.views import _get_topic_subtopics
 from .models import *
 from .schema import *
+
+import json
 
 api = NinjaAPI(
     csrf=True,
@@ -38,18 +41,27 @@ def post_answer(request: HttpRequest, data: PostAnswerSchema) -> PostAnswerRespo
 
 
 @api.post("/top", auth=django_auth)
-def post_topic(request: HttpRequest, data: PostTopicSchema):
-    request.GET.append(vars(data))
-    subtopics = get_topic_subtopics(request)
-
-    topic = Topic.objects.create(topic_text=data.topic, owner=request.user)
+def post_topic(request: HttpRequest, data: PostTopicSchema) -> PostTopicResponseSchema:
+    slug = data.slug or (slugify(data.topic) + "-" + request.user.username)
+    topic = Topic.objects.get_or_create(slug=slug)
+    topic.topic_text = data.topic
+    topic.owner = request.user
     topic.save()
 
-    for t in subtopics:
+    json_str = _get_topic_subtopics(data.topic)
+    for entry in json.loads(json_str):
         subtopic = Topic.objects.create(
-            subtopic_of=topic, topic_text=t.topic, description=t.description, topic_level=t.level
+            topic_text=entry.topic,
+            subtopic_of=topic,
+            owner=request.user,
+            description=entry.description,
+            topic_level=entry.topic_level,
         )
         subtopic.save()
+
+    response = PostTopicResponseSchema(topic=topic, subtopics=Topic.objects.filter(subtopic_of=topic))
+
+    return response
 
 
 @api.get("/me", response={200: UserSchema, 403: ErrorSchema})
