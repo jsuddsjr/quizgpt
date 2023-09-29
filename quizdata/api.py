@@ -39,7 +39,6 @@ def post_answer(request: HttpRequest, data: PostAnswerSchema) -> PostAnswerRespo
     history = AnswerHistory.objects.filter(question_bucket=question)
     return PostAnswerResponseSchema(correct=choice.is_correct, bucket=question, history=history)
 
-
 @api.post("/top", auth=django_auth)
 def post_topic(request: HttpRequest, data: PostTopicSchema) -> PostTopicResponseSchema:
     slug = data.slug or (slugify(data.topic) + "-" + request.user.username)

@@ -33,7 +33,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="card-deck">
+  <div class="card-columns">
     {% for t in object.topic_set.all %}
       <div class="card">
         <div class="card-body">
@@ -48,7 +48,7 @@
     {% endfor %}
   </div>
 
-  <div class="card-deck">
+  <div class="card-columns">
     {% for q in object.question_set.all %}
       {% if not q.is_suppressed %}
         {% include 'quizdata/question_detail.html' %}
@@ -57,34 +57,4 @@
   </div>
 {% endblock %}
 
-{% block extrajs %}
-  <script>
-    $('form').on(
-      'change',
-      'input',
-      /** @this HTMLInputElement */
-      async function (e) {
-        e.preventDefault()
-        const $input = $(e.currentTarget)
-        const $form = $(e.delegateTarget)
-        $form.prop('disabled', true)
-        $form.closest('input').prop('disabled', true)
-        const url = $form.attr('target')
-        const response = await fetch(url, {
-          method: 'POST',
-          cache: 'no-cache',
-          headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-          mode: 'same-origin',
-          body: JSON.stringify({ cid: $input.val() })
-        })
-        const body = await response.json()
-        if (body.correct) {
-          $input.parent().addClass('bg-success')
-        } else {
-          $input.parent().addClass('bg-warning')
-        }
-        $input.closest('.card').addClass('pop')
-      }
-    )
-  </script>
-{% endblock %}
+{% include 'quizdata/question_detail.html' %}

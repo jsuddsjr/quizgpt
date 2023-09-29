@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.urls import reverse
+from django.utils.timezone import timedelta, now
 from django.utils.translation import gettext_lazy as _
 import random
 
@@ -72,7 +72,21 @@ class QuestionBucket(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["user", "question"], name="unique_user_question")]
+        ordering = ["-modified"]
 
+    @staticmethod
+    def get_review_questions_for_bucket(user:User, bucket:int):
+        days_ago = [0, 1, 3, 7, 14, 28, 60, 90]
+        cutoff = now() - timedelta(days=days_ago[bucket])
+        return QuestionBucket.objects.filter(user=user, bucket=bucket, modified__lte=cutoff)
+
+    @classmethod
+    def get_review_questions(self):
+        for bucket in range(1, 8):
+            bucket = self.get_review_questions_for_bucket(self.user, bucket)
+            for q in sorted(bucket, key=lambda x: random.random()):
+                yield q.question
+    
 
 class AnswerHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

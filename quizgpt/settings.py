@@ -36,7 +36,7 @@ DEBUG = os.environ["ENV"] == "dev"
 
 ALLOWED_HOSTS = ["*"]
 
-ADMINS = ("John Sudds", "jsuddsjr@byui.edu")
+ADMINS = [("John Sudds", "jsuddsjr@byui.edu")]
 
 LOGIN_REDIRECT_URL = "/"
 
