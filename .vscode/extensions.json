@@ -1,8 +1,10 @@
 {
     "recommendations": [
-        "ms-python.isort",
-        "tamasfe.even-better-toml",
+        "batisteo.vscode-django",
         "formulahendry.auto-rename-tag",
+        "ms-python.isort",
+        "streetsidesoftware.code-spell-checker",
+        "tamasfe.even-better-toml",
         "zaczero.bootstrap-v4-snippets"
     ]
 }
