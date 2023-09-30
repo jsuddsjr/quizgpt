@@ -6,6 +6,24 @@
 
 {Provide a description the web app that I wrote. Describe how to start a test server on Ir computer and what website to open up to see the first page of the app.}
 
+## Review Schedule
+
+Each time you answer a question, its bucket assignment will change depending on whether
+you got the answer right or wrong. Each question will then be added to your review schedule 
+based on its bucket. (This is looesely based on the [Leitner System for flashcard review](https://e-student.org/leitner-system).)
+
+| Bucket | Review again in... |
+| ---    | ---                |
+| 1      | 1 day              |
+| 2      | 3 days             |
+| 3      | 7 days             |
+| 4      | 14 days            |
+| 5      | 28 days            |
+| 6      | 60 days            |
+| 7      | 90 days            |
+
+
+
 {Describe Ir purpose for writing this software.}
 
 {Provide a link to Ir ITube demonstration.  It should be a 4-5 minute demo of the software running (starting the server and navigating through the web pages) and a walkthrough of the code.}

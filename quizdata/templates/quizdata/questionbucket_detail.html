@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Questions</h1>
+
+  <div class="card-columns">
+  {% for q in object.get_review_questions %}
+    {% if not q.is_suppressed %}
+      {% include 'quizdata/question_detail.html' %}
+    {% endif %}
+  {% endfor %}
+  </div>
+{% endblock %}
+
+{% include 'quizdata/submit_answer.html' %}
