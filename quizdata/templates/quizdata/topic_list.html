@@ -2,7 +2,7 @@
 
 {% block content %}
   <div class="alert alert-light text-center col-lg-8 mx-auto mb-5 rounded-lg">
-    <form method="get" action="/api/top" class="needs-validation clearfix" novalidate>
+    <form method="get" action="/api/quizdata/top" class="needs-validation clearfix" novalidate>
       <div class="form-group">
         <input class="w-100 bg-transparent border-top-0 border-right-0 border-left-0 border-primary display-4 text-white" type="text" placeholder="Name your topic." id="inputLarge" name="topic" required />
         <div class="invalid-feedback">Topic is required.</div>
@@ -42,21 +42,19 @@
     </div>
     <div class="pagination">
       <span class="step-links">
-          {% if page_obj.has_previous %}
-              <a href="?page=1">&laquo; first</a>
-              <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-          {% endif %}
-  
-          <span class="current">
-              Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-          </span>
-  
-          {% if page_obj.has_next %}
-              <a href="?page={{ page_obj.next_page_number }}">next</a>
-              <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-          {% endif %}
+        {% if page_obj.has_previous %}
+          <a href="?page=1">&laquo; first</a>
+          <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">next</a>
+          <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
       </span>
-  </div>
+    </div>
   {% else %}
     <p class="text-warning">No topics found. You need to search for some.</p>
   {% endif %}
@@ -109,7 +107,10 @@
           mode: 'same-origin',
           body: JSON.stringify(props)
         })
-        const body = await response.json()
+        if (response.status === 200) {
+          const body = await response.json()
+          console.log(body)
+        }
       }
     )
   </script>

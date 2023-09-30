@@ -2,15 +2,21 @@
 
 ## Overview
 
-{Important!  Do not say in this section that this is college assignment.  Talk about what I are trying to accomplish as a software engineer to further Ir learning.}
+As a software engineer, I'm fascinated by the potential for **AI like ChatGPT** to disrupt the industry. This project is my first attempt at incorporating ChatGPT into a project. Plus, I decided to write it in **Python using the Django web framework**, also my first-ever attempt.
 
-{Provide a description the web app that I wrote. Describe how to start a test server on Ir computer and what website to open up to see the first page of the app.}
+I discovered after I started, that everyone seems to like the Quiz app. I found loads of examples for models that supported Questions and Answers, but none of them did what I wanted to do--namely, store the questions in a way that I could review them on a timeline, a proven way to learn faster. (Look up Leitner Method, if you want to know more. The link is below.)
+
+### Shocking Demo Link
+
+To keep myself honest, I'm going to demonstrate the app almost two weeks after I started. **Brace yourself.** (Remember, this is the first attempt at learning Django and ChatGPT prompt engineering.)
+
+[Software Demo Video](https://somup.com/c0QvrxBbze)
 
 ## Review Schedule
 
 Each time you answer a question, its bucket assignment will change depending on whether
-you got the answer right or wrong. Each question will then be added to your review schedule 
-based on its bucket. (This is looesely based on the [Leitner System for flashcard review](https://e-student.org/leitner-system).)
+you got the answer right or wrong. Each question will then be added to your review schedule
+based on its bucket. (This is loosely based on the [Leitner System for flashcard review](https://e-student.org/leitner-system).)
 
 | Bucket | Review again in... |
 | ---    | ---                |
@@ -22,23 +28,29 @@ based on its bucket. (This is looesely based on the [Leitner System for flashcar
 | 6      | 60 days            |
 | 7      | 90 days            |
 
-
-
-{Describe Ir purpose for writing this software.}
-
-{Provide a link to Ir ITube demonstration.  It should be a 4-5 minute demo of the software running (starting the server and navigating through the web pages) and a walkthrough of the code.}
-
-[Software Demo Video](http://Itube.link.goes.here)
-
 ## Web Pages
 
-{Describe each of the web pages I created and how the web app transitions between each of them.  Also describe what is dynamically created on each page.}
+The app has two main pages:
+
+* *Review* - This page is where I hoped you could see the questions you needed to review today.
+* *Topics* - This page would let you select new topics of study, and set your desired level of difficulty.
 
 ## Development Environment
 
-{Describe the tools that I used to develop the software}
+These are the main technologies used (most were unknown to me two weeks ago).
 
-I used the Django for Python framework to host the service,
+* *OpenAI* - ChatGPT is the star of this show.
+* *Django* - I'm really impressed with this framework, which includes View and Form widgets, as well as database Models.
+* *NinjaAPI for Django* - I needed a REST API, and the NinjaAPI decorators and automatic OpenAPI docs were handy.
+* *SQLite3* - To keep it simple, I choose to use a basic local database engine.
+* *Bootstrap 4* - Still a good choice for adaptive UI design.
+
+And some minor players:
+
+* *CrunchyForms* - They had a form for creating new users and I needed one quick. I only used Crunchy for one page, but WOW! Color me impressed.
+* *Poetry* - I'm using the Poetry package manager to take care of my dependencies.
+
+Since I'm using the Django framework to host the service, I also wrote some handy Tasks for Visual Studio code so I could save myself from typing and retying the `manage.py` command line. **Ugh.**
 
 ## Useful Websites
 
@@ -56,6 +68,8 @@ Here's a list of websites that I found helpful in this project.
 
 A list of things that I need to fix, improve, and add in the future.
 
-* Item 1
-* Item 2
-* Item 3
+* *Fix the UI* - At two weeks, I'm still not able to do everything I wanted from the user interface.
+* *Remove the tight coupling to User object* - Everything you create will be visible to you only. While that's a nice security feature, it means I can't easily share the quizzes with others.
+* *Rate the questions* - It's still ChatGPT after all, so not everything you read here is God's honest truth. In fact, ChatGPT is notorious for making stuff up, completely fabricating APIs that don't exist. The data model supports the idea that you can suppress questions, but you should be able to at least verify that the question is valid. After all, **you are trying to learn the subject, so it had better be accurate!**
+
+Anyhow, thanks for visiting.

@@ -32,7 +32,7 @@ def post_answer(request: HttpRequest, data: PostAnswerSchema) -> PostAnswerRespo
     if choice.is_correct:
         question.bucket = min(question.bucket + 1, 7)
     else:
-        question.bucket = max(question.bucket - 1, 1)
+        question.bucket = max(question.bucket - 1, 0)
     question.save()
 
     ## Track how many times the answer was given.

@@ -1,13 +1,17 @@
-<div class="card text-light border-primary">
+<div class="card text-white border-primary" style="z-index: 0;">
   <div class="card-header">
-    <span class="badge badge-primary text-uppercase">{{ object.topic_text }}</span>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item text-uppercase">{{ object.subtopic_of.topic_text }}</li>
+      <li class="breadcrumb-item text-uppercase">{{ object.subtopic_text }}</li>
+    </ol>
+    {% comment %} <span class="badge badge-primary text-uppercase">{{ object.topic_text }}</span> {% endcomment %}
   </div>
   <div class="card-body">
     <h5 class="card-title">{{ q.question_text }}</h5>
-    <form method="post" target="/api/ans">
+    <form method="post" data-action="/api/quizdata/ans">
       <div class="btn-group btn-group-toggle btn-group-lg btn-group-vertical w-100" data-toggle="buttons">
         {% for c in q.get_randomized_choices %}
-          <label class="btn btn-outline-light"><input type="checkbox" value="{{ c.id }}" autocomplete="off" checked="" />{{ c }}</label>
+          <label class="btn btn-outline-primary py-3"><input type="checkbox" value="{{ c.id }}" autocomplete="off" />{{ c }}</label>
         {% endfor %}
       </div>
     </form>

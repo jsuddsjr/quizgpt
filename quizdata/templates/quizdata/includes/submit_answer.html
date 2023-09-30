@@ -1,3 +1,5 @@
+
+
 {% block extracss %}
   <style>
     @media (min-width: 576px) {
@@ -6,13 +8,13 @@
         height: 0;
         animation: springOut 2s linear forwards;
       }
-    
+
       .card {
         transition: all 1s;
         transition-timing-function: ease-in-out;
         transition-delay: 2s;
       }
-    
+
       @keyframes springOut {
         0% {
           transform: scale(1);
@@ -28,36 +30,4 @@
       }
     }
   </style>
-{% endblock %}
-
-{% block extrajs %}
-  <script>
-    $('form').on(
-      'change',
-      'input',
-      /** @this HTMLInputElement */
-      async function (e) {
-        e.preventDefault()
-        const $input = $(e.currentTarget)
-        const $form = $(e.delegateTarget)
-        $form.prop('disabled', true)
-        $form.closest('input').prop('disabled', true)
-        const url = $form.attr('target')
-        const response = await fetch(url, {
-          method: 'POST',
-          cache: 'no-cache',
-          headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-          mode: 'same-origin',
-          body: JSON.stringify({ cid: $input.val() })
-        })
-        const body = await response.json()
-        if (body.correct) {
-          $input.parent().addClass('bg-success')
-        } else {
-          $input.parent().addClass('bg-warning')
-        }
-        $input.closest('.card').addClass('pop')
-      }
-    )
-  </script>
 {% endblock %}

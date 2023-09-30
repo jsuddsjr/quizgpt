@@ -8,13 +8,13 @@
         height: 0;
         animation: springOut 2s linear forwards;
       }
-
+    
       .card {
         transition: all 1s;
         transition-timing-function: ease-in-out;
         transition-delay: 2s;
       }
-
+    
       @keyframes springOut {
         0% {
           transform: scale(1);
@@ -57,4 +57,39 @@
   </div>
 {% endblock %}
 
-{% include 'quizdata/includes/question_detail.html' %}
+{% block extrajs %}
+  <script>
+    $(document).ready(function () {
+      $('form').on(
+        'change',
+        'input',
+        /** @this HTMLInputElement */
+        async function (e) {
+          console.log(e)
+          const $input = $(e.currentTarget)
+          const $form = $(e.delegateTarget)
+          $form.prop('disabled', true)
+          $form.closest('input').prop('disabled', true)
+          const url = $form.data('action')
+          const response = await fetch(url, {
+            method: 'POST',
+            cache: 'no-cache',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            mode: 'same-origin',
+            body: JSON.stringify({ cid: $input.val() })
+          })
+          if (response.status === 200) {
+            const body = await response.json()
+            console.log(body)
+            if (body.correct) {
+              $input.parent().addClass('bg-success')
+            } else {
+              $input.parent().addClass('bg-warning')
+            }
+            $input.closest('.card').addClass('pop')
+          }
+        }
+      )
+    })
+  </script>
+{% endblock %}

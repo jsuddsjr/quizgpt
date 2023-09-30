@@ -1,5 +1,36 @@
 {% extends 'base.html' %}
 
+{% block extracss %}
+  <style>
+    @media (min-width: 576px) {
+      .pop {
+        z-index: 100;
+        visibility: hidden;
+        height: 0;
+        animation: springOut 2s linear forwards;
+      }
+    
+      .card {
+        transition: visibility height 0s linear 2s;
+      }
+    
+      @keyframes springOut {
+        0% {
+          transform: scale(1);
+          animation-timing-function: cubic-bezier(0.33333, 0.66667, 0.66667, 1);
+        }
+        69.0983% {
+          transform: scale(1.1);
+          animation-timing-function: cubic-bezier(0.33333, 0, 0.66667, 0.33333);
+        }
+        100% {
+          transform: scale(0);
+        }
+      }
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
   {% if objects %}
     <div class="card-columns">
@@ -20,4 +51,46 @@
   {% endif %}
 {% endblock %}
 
-{% include 'quizdata/submit_answer.html' %}
+{% block extrajs %}
+  <script>
+    $(document).ready(() => {
+      $('form').on(
+        'change',
+        'input',
+        /** @this HTMLInputElement */
+        async function (e) {
+          console.log('change', e)
+          // Not a regular form submission, so prevent default doesn't work.
+          const $input = $(e.currentTarget)
+          const $form = $(e.delegateTarget)
+    
+          // Instead, I just disable the form and inputs.
+          $form.prop('disabled', true)
+          $form.find('input').prop('disabled', true)
+    
+          // I also do not use the regular "action" attribute.
+          const url = $form.data('action')
+          const response = await fetch(url, {
+            method: 'POST',
+            cache: 'no-cache',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            mode: 'same-origin',
+            body: JSON.stringify({ cid: $input.val() })
+          })
+    
+          // Check the response status.
+          if (response.status === 200) {
+            const body = await response.json()
+            console.log('body', body)
+            if (body.correct) {
+              $input.parent().addClass('bg-success')
+            } else {
+              $input.parent().addClass('bg-warning')
+            }
+            $input.closest('.card').addClass('pop')
+          }
+        }
+      )
+    })
+  </script>
+{% endblock %}
