@@ -62,6 +62,7 @@ class PostTopicResponseSchema(Schema):
 
 class ErrorMessage(Schema):
     error: str
+    data: str = None
 
 
 class PostQuestionSchema(Schema):
@@ -69,4 +70,5 @@ class PostQuestionSchema(Schema):
 
 
 class PostQuestionResponseSchema(Schema):
-    questions: List[QuestionSchema]
+    topic_id: int
+    questions: List[int] = []

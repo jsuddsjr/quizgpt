@@ -9,11 +9,12 @@ api = NinjaAPI(
     csrf=True,
     docs_decorator=staff_member_required,
     title="QuizGPT API",
+    version="0.1.0",
     urls_namespace="quizgpt",
 )
 
-api.add_router("/quizdata", quizdata_router)
-api.add_router("/chatapi", chatapi_router)
+api.add_router("/quizdata", quizdata_router, tags=["quizdata"])
+api.add_router("/chatapi", chatapi_router, tags=["chatapi"])
 
 
 class UserSchema(ModelSchema):
@@ -26,14 +27,16 @@ class ErrorSchema(Schema):
     message: str
 
 
-@api.get("/me", response={200: UserSchema, 403: ErrorSchema})
+@api.get("/me", tags=["user"], summary="Retrieve the logged in user", response={200: UserSchema, 403: ErrorSchema})
 def me(request):
     if not request.user.is_authenticated:
         return 403, {"message": "Please sign in first"}
     return request.user
 
 
-@api.post("/user", response={200: UserSchema, 403: ErrorSchema})
+@api.post(
+    "/user", tags=["user"], summary="Add a new user to the database", response={200: UserSchema, 403: ErrorSchema}
+)
 def create_user(request, user: UserSchema):
     try:
         user = User.objects.create_user(**user.dict())

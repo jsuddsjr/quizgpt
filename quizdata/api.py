@@ -16,7 +16,14 @@ import json
 router = Router()
 
 
-@router.post("/ans", auth=django_auth)
+@router.post(
+    "/ans",
+    auth=django_auth,
+    tags=["quizdata"],
+    summary="Record an answer in the database",
+    response={200: PostAnswerResponseSchema},
+)
+@transaction.atomic
 def post_answer(request: HttpRequest, data: PostAnswerSchema) -> PostAnswerResponseSchema:
     choice = get_object_or_404(Choice, pk=data.cid)
 
@@ -38,7 +45,14 @@ def post_answer(request: HttpRequest, data: PostAnswerSchema) -> PostAnswerRespo
     return PostAnswerResponseSchema(correct=choice.is_correct, bucket=question, history=history)
 
 
-@router.post("/top", auth=django_auth)
+@router.post(
+    "/top",
+    auth=django_auth,
+    tags=["quizdata"],
+    summary="Request new subtopics for the specified topic",
+    response={200: PostTopicResponseSchema, 400: ErrorMessage},
+)
+@transaction.atomic
 def post_topic(request: HttpRequest, data: PostTopicSchema) -> PostTopicResponseSchema:
     slug = data.slug or (slugify(data.topic) + "-" + request.user.username)
     topic, _ = Topic.objects.get_or_create(slug=slug, user=request.user)
@@ -48,59 +62,66 @@ def post_topic(request: HttpRequest, data: PostTopicSchema) -> PostTopicResponse
     topic.save()
 
     json_str = _get_topic_subtopics(data.topic)
-    blob = json.loads(json_str)
+    records = json.loads(json_str)
 
-    for entry in blob:
-        if entry is str:
-            entry = blob[entry]
-            continue
-        subtopic = Topic.objects.create(
-            topic_text=entry["topic"],
-            subtopic_of=topic,
-            user=request.user,
-            description=entry["description"],
-            topic_level=entry["topic_level"],
-        )
-        subtopic.save()
-
-    response = PostTopicResponseSchema(topic=topic, subtopics=Topic.objects.filter(subtopic_of=topic))
-
-    return response
+    try:
+        for entry in records:
+            subtopic = Topic.objects.create(
+                topic_text=entry["topic"],
+                subtopic_of=topic,
+                user=request.user,
+                description=entry["description"],
+                topic_level=entry["topic_level"],
+            )
+            subtopic.save()
+        response = PostTopicResponseSchema(topic=topic, subtopics=Topic.objects.filter(subtopic_of=topic))
+        return response
+    except Exception as e:
+        return 400, ErrorMessage(error=str(e), data=json_str)
 
 
-@router.post("/top/{slug}/qst", auth=django_auth)
-def post_question(request: HttpRequest, slug: str, data: PostQuestionSchema) -> PostQuestionResponseSchema:
-    topic = get_object_or_404(Topic, slug)
+@router.post(
+    "/top/{slug}/qst",
+    auth=django_auth,
+    tags=["quizdata"],
+    summary="Request new questions for a subtopic",
+    response={200: PostQuestionResponseSchema, 400: ErrorMessage},
+)
+def post_question(request: HttpRequest, slug: str, data: PostQuestionSchema):
+    topic = get_object_or_404(Topic, slug=slug)
 
-    if topic.user != request.user:
-        return ErrorMessage(_("Topic does not belong to you."))
-    if topic.is_hidden:
-        return ErrorMessage(_("Topic is hidden."))
+    if topic.user and topic.user != request.user:
+        return 400, ErrorMessage(error=_("Topic does not belong to you."))
     if topic.subtopic_of is None:
-        return ErrorMessage(_("Topic is not a subtopic."))
+        return 400, ErrorMessage(error=_("Topic is not a subtopic."))
 
     json_str = _get_topic_questions(topic.subtopic_of.topic_text, topic.topic_text, topic.topic_level, data.count)
-    records = json.loads(json_str, object_hook=lambda d: TopicQuestionsResponseSchema(**d))
-    response = list(map(lambda row: _process_question(topic, request.user, row), records))
-    return response
+
+    try:
+        records = json.loads(json_str)
+        question_ids = list(map(lambda row: _process_question(topic, request.user, row), records))
+        return PostQuestionResponseSchema(topic_id=topic.id, questions=question_ids)
+    except Exception as e:
+        return 400, ErrorMessage(error=str(e), data=json_str)
 
 
 @transaction.atomic
-def _process_question(topic: Topic, user: User, data: TopicQuestionsResponseSchema) -> QuestionSchema:
-    question = Question.objects.create(question_text=data.question, question_type="M", topic=topic)
+def _process_question(topic: Topic, user: User, data: dict) -> int:
+    question = Question.objects.create(question_text=data["question"], question_type="M", topic_id=topic.id)
     question.save()
 
     bucket = QuestionBucket.objects.create(user=user, question=question, bucket=0)
     bucket.save()
 
-    for index, choice in enumerate(data.choices):
+    answer_index = dict["answer_index"]
+    for index, ans in enumerate(data["answers"]):
         choice = Choice.objects.create(
-            choice_text=choice,
+            choice_text=ans,
             question=question,
             order=index,
         )
-        if index == data.answer_index:
+        if index == answer_index:
             choice.is_correct = True
         choice.save()
 
-    return QuestionSchema.from_orm(question)
+    return question.id

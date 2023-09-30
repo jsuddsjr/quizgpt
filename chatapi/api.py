@@ -42,7 +42,7 @@ class TopicSubtopicsResponseSchema(Schema):
     "/{slug}/subtopics",
     auth=django_auth,
     response=TopicSubtopicsResponseSchema,
-    tags=["subtopics"],
+    tags=["chatapi"],
     summary="Get subtopics for a topic",
 )
 def get_topic_subtopics(request, slug: str) -> HttpResponse:
@@ -85,7 +85,7 @@ def _get_topic_subtopics(
         {"role": "user", "content": prompt},
         {
             "role": "assistant",
-            "content": "Return ONLY JSON array of objects with fields 'topic' (string), 'description' (string), 'topic_level' (number).",
+            "content": "Format response as JSON array of objects with fields 'topic', 'description', 'topic_level' (a number).",
         },
     ]
     completion = openai.ChatCompletion.create(model="gpt-3.5-turbo-0613", messages=messages)
@@ -102,8 +102,7 @@ class TopicQuestionsResponseSchema(Schema):
 @router.get(
     "/{slug}/questions",
     auth=django_auth,
-    response=TopicQuestionsResponseSchema,
-    tags=["questions"],
+    tags=["chatapi"],
     summary="Get questions for a subtopic",
 )
 def get_topic_questions(request, slug: str) -> HttpResponse:
@@ -125,7 +124,7 @@ def get_topic_questions(request, slug: str) -> HttpResponse:
 
 def _get_topic_questions(topic_text: str, subtopic_text: str, topic_level: int = 1, question_count: int = 5) -> str:
     messages = [
-        {"role": "system", "content": "Act as college tutor."},
+        {"role": "system", "content": "Act as expert system."},
         {
             "role": "user",
             "content": promptCreate.format(
@@ -134,7 +133,7 @@ def _get_topic_questions(topic_text: str, subtopic_text: str, topic_level: int =
         },
         {
             "role": "assistant",
-            "content": "Return ONLY JSON array of objects with fields 'question' (string), 'answers' (array), and 'answer_index' (number).",
+            "content": "Format entire response as JSON array of objects with fields 'question', 'answers' (array), and 'answer_index' (number).",
         },
     ]
     completion = openai.ChatCompletion.create(model="gpt-3.5-turbo-0613", messages=messages, temperature=1.1)
