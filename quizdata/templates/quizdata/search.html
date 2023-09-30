@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="alert alert-light text-center col-lg-8 mx-auto mb-5 rounded-lg">
+    <form method="get" action="/api/top" class="needs-validation clearfix" novalidate>
+      <div class="form-group">
+        <input class="w-100 bg-transparent border-top-0 border-right-0 border-left-0 border-primary display-4 text-white" type="text" placeholder="Name your topic." id="inputLarge" name="topic" required />
+        <div class="invalid-feedback">Topic is required.</div>
+      </div>
+      <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
+        <label class="btn btn-sm btn-outline-primary active"><input type="radio" name="level" id="option1" autocomplete="off" value="1" checked="" />Beginner</label>
+        <label class="btn btn-sm btn-outline-primary"><input type="radio" name="level" id="option2" autocomplete="off" value="2" />Intermediate</label>
+        <label class="btn btn-sm btn-outline-primary"><input type="radio" name="level" id="option3" autocomplete="off" value="3" />Advanced</label>
+        <label class="btn btn-sm btn-outline-primary"><input type="radio" name="level" id="option3" autocomplete="off" value="4" />Pro</label>
+        <label class="btn btn-sm btn-outline-primary"><input type="radio" name="level" id="option3" autocomplete="off" value="5" />Master</label>
+      </div>
+      <div class="form-group float-left">
+        <button type="submit" class="btn btn-primary">Let's go!</button>
+      </div>
+    </form>
+  </div>
+
+  {% if object_list %}
+    <h2>Review</h2>
+    <p class="text-xl-left">Or review one of these.</p>
+    <div class="card-columns">
+      {% for topic in object_list %}
+        <div class="card border-success w-100">
+          <div class="card-header">
+            <span class="badge badge-secondary">{{ topic.subtopic_of }}</span>
+          </div>
+          <div class="card-body">
+            <h4 class="card-title">{{ topic }}</h4>
+            <p class="card-text">{{ topic.description }}</p>
+            <a class="btn btn-primary stretched-link" href="{{ topic.get_absolute_url }}">
+              <i class="fa fa-folder-open"></i>
+              Open topic
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="pagination">
+      <span class="step-links">
+          {% if page_obj.has_previous %}
+              <a href="?page=1">&laquo; first</a>
+              <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+          {% endif %}
+  
+          <span class="current">
+              Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+          </span>
+  
+          {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}">next</a>
+              <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+          {% endif %}
+      </span>
+  </div>
+  {% else %}
+    <p class="text-warning">No topics found. You need to search for some.</p>
+  {% endif %}
+{% endblock %}
+
+{% block extrajs %}
+  <script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    ;(function () {
+      'use strict'
+      window.addEventListener(
+        'load',
+        function () {
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          var forms = document.getElementsByClassName('needs-validation')
+          // Loop over them and prevent submission
+          var validation = Array.prototype.filter.call(forms, function (form) {
+            form.addEventListener(
+              'submit',
+              function (event) {
+                if (form.checkValidity() === false) {
+                  event.preventDefault()
+                  event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+              },
+              false
+            )
+          })
+        },
+        false
+      )
+    })()
+    
+    $('form').on(
+      'submit',
+      /** @this HTMLFormElement */
+      async function (e) {
+        e.preventDefault()
+        const $form = $(e.currentTarget)
+        if (!$form[0].checkValidity()) {
+          return
+        }
+        const url = $form.attr('action')
+        const props = Object.fromEntries(new FormData(this).entries())
+        const response = await fetch(url, {
+          method: 'POST',
+          cache: 'no-cache',
+          headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+          mode: 'same-origin',
+          body: JSON.stringify(props)
+        })
+        const body = await response.json()
+      }
+    )
+  </script>
+{% endblock %}
