@@ -8,13 +8,13 @@
         height: 0;
         animation: springOut 2s linear forwards;
       }
-    
+
       .card {
         transition: all 1s;
         transition-timing-function: ease-in-out;
         transition-delay: 2s;
       }
-    
+
       @keyframes springOut {
         0% {
           transform: scale(1);
@@ -51,10 +51,10 @@
   <div class="card-columns">
     {% for q in object.question_set.all %}
       {% if not q.is_suppressed %}
-        {% include 'quizdata/question_detail.html' %}
+        {% include 'quizdata/includes/question_detail.html' %}
       {% endif %}
     {% endfor %}
   </div>
 {% endblock %}
 
-{% include 'quizdata/question_detail.html' %}
+{% include 'quizdata/includes/question_detail.html' %}

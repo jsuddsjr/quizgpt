@@ -28,7 +28,7 @@ class Topic(models.Model):
         return self.topic_text
 
     def get_absolute_url(self):
-        return reverse("quizdata:topic-questions", args=[str(self.slug)])
+        return reverse("quizdata:topic_questions", args=[str(self.slug)])
 
     def save(self, *args, **kwargs):
         if not self.id:

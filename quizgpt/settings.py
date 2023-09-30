@@ -50,6 +50,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.sessions",
     "django.contrib.staticfiles",
+    "crispy_forms",
+    "crispy_bootstrap4",
+    "quizgpt",
     "quizdata",
     "chatapi",
     "paper",
@@ -159,3 +162,5 @@ DEBUG_TOOLBAR_PANELS = [
 RENDER_PANELS = True
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"

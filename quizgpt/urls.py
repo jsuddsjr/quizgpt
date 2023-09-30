@@ -21,19 +21,23 @@ from django.urls import path, include
 # from django.views import debug
 
 from paper.views import PaperQuestionReorder
-from quizdata.views import QuestionReviewView
+
+from .views import home, SignUpView, validate_username
 
 from .api import api
 
 admin.autodiscover()
+
+app_name = "quizgpt"
 urlpatterns = [
-    ## path("", debug.default_urlconf),
-    path("__debug__/", include("debug_toolbar.urls")),
+    # path("", debug.default_urlconf),
+    # path("__debug__/", include("debug_toolbar.urls")),
+    path("signup", SignUpView.as_view(), name="signup"),
+    path("validate_username", validate_username, name="validate_username"),
     path("accounts/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
     path("api/", api.urls),
-    path("change-password/", auth_views.PasswordChangeView.as_view(), name="change-password"),
+    path("change-password/", auth_views.PasswordChangeView.as_view(), name="change_password"),
     path("paper/", PaperQuestionReorder.as_view()),
-    path("quizdata/", include("quizdata.urls")),
-    path("", QuestionReviewView.as_view(), name="question-review"),
+    path("", include("quizdata.urls")),
 ]

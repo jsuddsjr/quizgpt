@@ -3,7 +3,7 @@ from .views import QuestionReviewView, TopicDetailView, TopicListView
 
 app_name = "quizdata"
 urlpatterns = [
-    path("topics/", TopicListView.as_view(), name="topic-list"),
-    path("topics/<slug>", TopicDetailView.as_view(), name="topic-questions"),
-    path("", QuestionReviewView.as_view(), name="question-review"),
+    path("topics/", TopicListView.as_view(), name="topic_list"),
+    path("topics/<slug>", TopicDetailView.as_view(), name="topic_questions"),
+    path("", QuestionReviewView.as_view(), name="question_review"),
 ]
