@@ -7,24 +7,20 @@ from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 
-@login_required
-def home(request):
-    return render(request, 'home.html')
 
 class SignUpView(CreateView):
-    template_name = 'signup.html'
+    template_name = "signup.html"
     form_class = UserCreationForm
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy("quizdata:topic_list")
 
     def form_valid(self, form):
         valid = super().form_valid(form)
         login(self.request, self.object)
         return valid
 
+
 def validate_username(request):
     """Check username availability"""
-    username = request.GET.get('username', None)
-    response = {
-        'is_taken': User.objects.filter(username__iexact=username).exists()
-    }
+    username = request.GET.get("username", None)
+    response = {"is_taken": User.objects.filter(username__iexact=username).exists()}
     return JsonResponse(response)

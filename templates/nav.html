@@ -1,13 +1,17 @@
 {% load tags %}
 
+{% url 'quizdata:question_review' as review_url %}
 {% url 'quizdata:topic_list' as topics_url %}
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
   <div class="container">
     <a class="navbar-brand" href="/" title="Home">QuizGPT</a>
     <button class="navbar-toggler" data-target="#my-nav" data-toggle="collapse" aria-controls="my-nav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
     <div id="my-nav" class="collapse navbar-collapse">
       <ul class="nav nav-pills ml-auto">
+        <li class="nav-item">
+          <a class="nav-link {% active request review_url %}" href="{{ review_url }}">Review</a>
+        </li>
         <li class="nav-item">
           <a class="nav-link {% active request topics_url %}" href="{{ topics_url }}">Topics</a>
         </li>
@@ -21,11 +25,14 @@
             <a class="nav-link" href="{% url 'login' %}?next={{ request.path }}">Login</a>
           </li>
         {% endif %}
-        {% if user %}
+        {% if user.is_staff %}
           <li class="nav-item">
             <a class="nav-link" href="/admin/">Admin</a>
           </li>
         {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="/api/docs">Docs</a>
+        </li>
       </ul>
     </div>
   </div>

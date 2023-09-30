@@ -1,17 +1,20 @@
 from django.http import HttpRequest
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import slugify
 
 from ninja import Router
 from ninja.security import django_auth
 
-from chatapi.views import _get_topic_subtopics
+from chatapi.api import TopicQuestionsResponseSchema, _get_topic_subtopics, _get_topic_questions
+
 from .models import *
 from .schema import *
 
 import json
 
 router = Router()
+
 
 @router.post("/ans", auth=django_auth)
 def post_answer(request: HttpRequest, data: PostAnswerSchema) -> PostAnswerResponseSchema:
@@ -33,6 +36,7 @@ def post_answer(request: HttpRequest, data: PostAnswerSchema) -> PostAnswerRespo
 
     history = AnswerHistory.objects.filter(question_bucket=question)
     return PostAnswerResponseSchema(correct=choice.is_correct, bucket=question, history=history)
+
 
 @router.post("/top", auth=django_auth)
 def post_topic(request: HttpRequest, data: PostTopicSchema) -> PostTopicResponseSchema:
@@ -63,23 +67,40 @@ def post_topic(request: HttpRequest, data: PostTopicSchema) -> PostTopicResponse
 
     return response
 
-@router.post("/qst", auth=django_auth)
-def post_question(request: HttpRequest, data: PostQuestionSchema) -> PostQuestionResponseSchema:
-    topic = get_object_or_404(Topic, pk=data.tid)
-    question = Question.objects.create(
-        question_text=data.question,
-        topic=topic,
-        user=request.user,
-    )
+
+@router.post("/top/{slug}/qst", auth=django_auth)
+def post_question(request: HttpRequest, slug: str, data: PostQuestionSchema) -> PostQuestionResponseSchema:
+    topic = get_object_or_404(Topic, slug)
+
+    if topic.user != request.user:
+        return ErrorMessage(_("Topic does not belong to you."))
+    if topic.is_hidden:
+        return ErrorMessage(_("Topic is hidden."))
+    if topic.subtopic_of is None:
+        return ErrorMessage(_("Topic is not a subtopic."))
+
+    json_str = _get_topic_questions(topic.subtopic_of.topic_text, topic.topic_text, topic.topic_level, data.count)
+    records = json.loads(json_str, object_hook=lambda d: TopicQuestionsResponseSchema(**d))
+    response = list(map(lambda row: _process_question(topic, request.user, row), records))
+    return response
+
+
+@transaction.atomic
+def _process_question(topic: Topic, user: User, data: TopicQuestionsResponseSchema) -> QuestionSchema:
+    question = Question.objects.create(question_text=data.question, question_type="M", topic=topic)
     question.save()
 
-    for choice in data.choices:
-        Choice.objects.create(
+    bucket = QuestionBucket.objects.create(user=user, question=question, bucket=0)
+    bucket.save()
+
+    for index, choice in enumerate(data.choices):
+        choice = Choice.objects.create(
             choice_text=choice,
             question=question,
-            user=request.user,
-        ).save()
+            order=index,
+        )
+        if index == data.answer_index:
+            choice.is_correct = True
+        choice.save()
 
-    response = PostQuestionResponseSchema(question=question, choices=Choice.objects.filter(question=question))
-
-    return response
+    return QuestionSchema.from_orm(question)

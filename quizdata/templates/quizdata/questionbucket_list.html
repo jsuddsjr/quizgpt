@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% if objects %}
+    <div class="card-columns">
+      {% for qb in objects %}
+        {% if not qb.question.is_suppressed %}
+          {# prettier-ignore #}
+          {% with object=qb.question.topic q=qb.question %}
+            {% include 'quizdata/includes/question_detail.html' %}
+          {% endwith %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <h2 class="text-warning">No questions to review</h2>
+    <p class="text-warning">You haven't answered any questions yet, so there's nothing to review.</p>
+
+    <a href="{% url 'quizdata:topic_list' %}" class="btn btn-primary">Find some topics.</a>
+  {% endif %}
+{% endblock %}
+
+{% include 'quizdata/submit_answer.html' %}

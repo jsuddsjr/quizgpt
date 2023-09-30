@@ -12,12 +12,13 @@ class TopicListView(LoginRequiredMixin, ListView):
     def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset().filter(user=self.request.user, is_hidden=False, subtopic_of__isnull=False)
 
+
 class TopicDetailView(LoginRequiredMixin, DetailView):
     model = Topic
 
 
-class QuestionReviewView(LoginRequiredMixin, DetailView):
+class QuestionReviewView(LoginRequiredMixin, ListView):
     model = QuestionBucket
 
-    def get_object(self):
-        return QuestionBucket.objects.filter(user = self.request.user).first()
+    def get_queryset(self):
+        return QuestionBucket.get_review_questions(self.request.user)

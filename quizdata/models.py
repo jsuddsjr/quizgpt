@@ -83,8 +83,8 @@ class QuestionBucket(models.Model):
         super(QuestionBucket, self).save(*args, **kwargs)
 
     @classmethod
-    def get_review_questions(self):
-        return QuestionBucket.objects.select_related("question").filter(review_date__lte=now())
+    def get_review_questions(self, user: User):
+        return QuestionBucket.objects.select_related("question").filter(user=user, review_date__lte=now())
 
 
 class AnswerHistory(models.Model):

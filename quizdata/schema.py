@@ -60,9 +60,12 @@ class PostTopicResponseSchema(Schema):
     subtopics: List[TopicSchema]
 
 
+class ErrorMessage(Schema):
+    error: str
+
+
 class PostQuestionSchema(Schema):
-    topic_slugs: List[str]
-    count: int = 10
+    count: int = 5
 
 
 class PostQuestionResponseSchema(Schema):

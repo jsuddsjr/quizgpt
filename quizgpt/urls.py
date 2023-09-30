@@ -22,7 +22,7 @@ from django.urls import path, include
 
 from paper.views import PaperQuestionReorder
 
-from .views import home, SignUpView, validate_username
+from .views import SignUpView, validate_username
 
 from .api import api
 
