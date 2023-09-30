@@ -14,13 +14,13 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 import dotenv
 
+from django.core.management.commands.runserver import Command as runserver
+from pathlib import Path
+
 dotenv.load_dotenv()
 
-from django.core.management.commands.runserver import Command as runserver
-
+# Change the default port for the runserver command.
 runserver.default_port = "3000"
-
-from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
