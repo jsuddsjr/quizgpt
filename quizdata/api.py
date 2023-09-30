@@ -13,8 +13,7 @@ import json
 
 api = NinjaAPI(
     csrf=True,
-    title="QuizData API",
-    description="This API is used to update the QuizGPT data models.",
+    urls_namespace="quizdata",
 )
 
 
@@ -68,9 +67,3 @@ def post_topic(request: HttpRequest, data: PostTopicSchema) -> PostTopicResponse
 
     return response
 
-
-@api.get("/me", response={200: UserSchema, 403: ErrorSchema})
-def me(request):
-    if not request.user.is_authenticated:
-        return 403, {"message": "Please sign in first"}
-    return request.user

@@ -16,18 +16,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.views import debug
+# from django.views import debug
 
 from paper.views import PaperQuestionReorder
+
+from .api import api
 
 admin.autodiscover()
 urlpatterns = [
     ## path("", debug.default_urlconf),
-    ## path("api/openai", include("openai.urls")),
     path("admin/", admin.site.urls),
-    path("api/", include("chatapi.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
-    path("paper/", PaperQuestionReorder.as_view()),
     path("__debug__/", include("debug_toolbar.urls")),
+    path("paper/", PaperQuestionReorder.as_view()),
+    path("api/", api.urls),
+
+    ## Last, so the above paths can override these.
     path("", include("quizdata.urls")),
 ]

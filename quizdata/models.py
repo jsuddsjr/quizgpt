@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.urls import reverse
@@ -27,7 +28,7 @@ class Topic(models.Model):
         return self.topic_text
 
     def get_absolute_url(self):
-        return reverse("quizdata:topic-detail", args=[str(self.slug)])
+        return reverse("quizdata:topic-questions", args=[str(self.slug)])
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -64,9 +65,11 @@ class Choice(models.Model):
 
 
 class QuestionBucket(models.Model):
+    NEXT_REVIEW_DAYS = [0, 1, 3, 7, 14, 28, 60, 90]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    bucket = models.IntegerField(default=0)
+    bucket = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(7)], default=0)
+    review_date = models.DateTimeField(null=True)
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -74,19 +77,15 @@ class QuestionBucket(models.Model):
         constraints = [models.UniqueConstraint(fields=["user", "question"], name="unique_user_question")]
         ordering = ["-modified"]
 
-    @staticmethod
-    def get_review_questions_for_bucket(user:User, bucket:int):
-        days_ago = [0, 1, 3, 7, 14, 28, 60, 90]
-        cutoff = now() - timedelta(days=days_ago[bucket])
-        return QuestionBucket.objects.filter(user=user, bucket=bucket, modified__lte=cutoff)
+    ## Calculate the next review date based on the current bucket.
+    def save(self, *args, **kwargs):
+        self.review_date = now() + timedelta(days=self.NEXT_REVIEW_DAYS[self.bucket])
+        super(QuestionBucket, self).save(*args, **kwargs)
 
     @classmethod
     def get_review_questions(self):
-        for bucket in range(1, 8):
-            bucket = self.get_review_questions_for_bucket(self.user, bucket)
-            for q in sorted(bucket, key=lambda x: random.random()):
-                yield q.question
-    
+        return QuestionBucket.objects.select_related("question").filter(review_date__lte=now())
+
 
 class AnswerHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

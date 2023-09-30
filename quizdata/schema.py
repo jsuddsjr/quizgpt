@@ -4,15 +4,6 @@ from typing import List
 from .models import Topic, Question, Choice, QuestionBucket, AnswerHistory
 
 
-class UserSchema(ModelSchema):
-    class Config:
-        model = User
-        model_exclude = ["password", "last_login", "user_permissions"]
-
-
-class ErrorSchema(Schema):
-    message: str
-
 
 class TopicSchema(ModelSchema):
     class Config:
