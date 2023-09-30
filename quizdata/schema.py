@@ -1,8 +1,6 @@
-from django.contrib.auth.models import User
 from ninja import Schema, ModelSchema
 from typing import List
 from .models import Topic, Question, Choice, QuestionBucket, AnswerHistory
-
 
 
 class TopicSchema(ModelSchema):
@@ -60,3 +58,12 @@ class PostTopicSchema(Schema):
 class PostTopicResponseSchema(Schema):
     topic: TopicSchema
     subtopics: List[TopicSchema]
+
+
+class PostQuestionSchema(Schema):
+    topic_slugs: List[str]
+    count: int = 10
+
+
+class PostQuestionResponseSchema(Schema):
+    questions: List[QuestionSchema]

@@ -2,7 +2,7 @@ from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import slugify
 
-from ninja import NinjaAPI
+from ninja import Router
 from ninja.security import django_auth
 
 from chatapi.views import _get_topic_subtopics
@@ -11,13 +11,9 @@ from .schema import *
 
 import json
 
-api = NinjaAPI(
-    csrf=True,
-    urls_namespace="quizdata",
-)
+router = Router()
 
-
-@api.post("/ans", auth=django_auth)
+@router.post("/ans", auth=django_auth)
 def post_answer(request: HttpRequest, data: PostAnswerSchema) -> PostAnswerResponseSchema:
     choice = get_object_or_404(Choice, pk=data.cid)
 
@@ -38,7 +34,7 @@ def post_answer(request: HttpRequest, data: PostAnswerSchema) -> PostAnswerRespo
     history = AnswerHistory.objects.filter(question_bucket=question)
     return PostAnswerResponseSchema(correct=choice.is_correct, bucket=question, history=history)
 
-@api.post("/top", auth=django_auth)
+@router.post("/top", auth=django_auth)
 def post_topic(request: HttpRequest, data: PostTopicSchema) -> PostTopicResponseSchema:
     slug = data.slug or (slugify(data.topic) + "-" + request.user.username)
     topic, _ = Topic.objects.get_or_create(slug=slug, user=request.user)
@@ -67,3 +63,23 @@ def post_topic(request: HttpRequest, data: PostTopicSchema) -> PostTopicResponse
 
     return response
 
+@router.post("/qst", auth=django_auth)
+def post_question(request: HttpRequest, data: PostQuestionSchema) -> PostQuestionResponseSchema:
+    topic = get_object_or_404(Topic, pk=data.tid)
+    question = Question.objects.create(
+        question_text=data.question,
+        topic=topic,
+        user=request.user,
+    )
+    question.save()
+
+    for choice in data.choices:
+        Choice.objects.create(
+            choice_text=choice,
+            question=question,
+            user=request.user,
+        ).save()
+
+    response = PostQuestionResponseSchema(question=question, choices=Choice.objects.filter(question=question))
+
+    return response

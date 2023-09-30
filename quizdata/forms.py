@@ -1,11 +1,5 @@
-from django.forms import Form, CharField, BooleanField, TextInput, ValidationError
+from django.forms import ValidationError
 from django.forms.models import BaseInlineFormSet
-
-
-class QuestionAdminForm(Form):
-    question_text = TextInput
-    option = CharField()
-    option_active = BooleanField(initial=True)
 
 
 class AtLeastOneRequiredInlineFormSet(BaseInlineFormSet):

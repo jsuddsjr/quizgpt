@@ -21,8 +21,8 @@ class QuestionAdmin(ModelAdmin):
 
 
 class QuestionInline(TabularInline):
-    fields = ["question_text", "question_type", "is_suppressed"]
     model = Question
+    fields = ["question_text", "question_type", "is_suppressed"]
     show_change_link = True
 
 
@@ -35,10 +35,10 @@ class SubtopicInline(TabularInline):
 
 
 class TopicAdmin(ModelAdmin):
+    prepopulated_fields = {"slug": ("topic_text",)}
     fields = ["topic_text", "description", "slug", "user", "is_hidden"]
     list_display = ["topic_text", "created", "modified", "user", "is_hidden"]
     inlines = [SubtopicInline, QuestionInline]
-    prepopulated_fields = {"slug": ["topic_text"]}
 
 
 site.register(Topic, TopicAdmin)

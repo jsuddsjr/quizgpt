@@ -15,22 +15,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import path, include
+
 # from django.views import debug
 
 from paper.views import PaperQuestionReorder
+from quizdata.views import QuestionReviewView
 
 from .api import api
 
 admin.autodiscover()
 urlpatterns = [
     ## path("", debug.default_urlconf),
-    path("admin/", admin.site.urls),
-    path("accounts/", include("django.contrib.auth.urls")),
     path("__debug__/", include("debug_toolbar.urls")),
-    path("paper/", PaperQuestionReorder.as_view()),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("admin/", admin.site.urls),
     path("api/", api.urls),
-
-    ## Last, so the above paths can override these.
-    path("", include("quizdata.urls")),
+    path("change-password/", auth_views.PasswordChangeView.as_view(), name="change-password"),
+    path("paper/", PaperQuestionReorder.as_view()),
+    path("quizdata/", include("quizdata.urls")),
+    path("", QuestionReviewView.as_view(), name="question-review"),
 ]
