@@ -107,7 +107,7 @@ def post_question(request: HttpRequest, slug: str, data: PostQuestionSchema):
 
 @transaction.atomic
 def _process_question(topic: Topic, user: User, data: dict) -> int:
-    question = Question.objects.create(question_text=data["question"], question_type="M", topic_id=topic.id)
+    question = Question.objects.create(question_text=data["question"], question_type="M", topic=topic)
     question.save()
 
     bucket = QuestionBucket.objects.create(user=user, question=question, bucket=0)
