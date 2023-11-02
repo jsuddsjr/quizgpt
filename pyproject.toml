@@ -20,7 +20,7 @@ packages = [{ include = "quizgpt" }]
 [tool.poetry.dependencies]
 black = "^23.9.1"
 crispy-bootstrap4 = "^2022.1"
-Django = "^4.2.5"
+Django = "^4.2.7"
 django-crispy-forms = "^2.0"
 django-jsonview = "^2.0.0"
 django-ninja = "^1.0b1"
