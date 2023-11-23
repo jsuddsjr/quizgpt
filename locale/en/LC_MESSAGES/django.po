@@ -1,0 +1,123 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-11-22 19:27-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\chatapi\api.py:58
+msgid "URL parameter 'level' must be integer."
+msgstr ""
+
+#: .\chatapi\api.py:60
+msgid "URL parameter 'level' must be in range 0 to 5."
+msgstr ""
+
+#: .\chatapi\api.py:65
+msgid "URL parameter 'count' must be integer."
+msgstr ""
+
+#: .\chatapi\api.py:67
+msgid "URL parameter 'count' must be in range 1 to 15."
+msgstr ""
+
+#: .\chatapi\api.py:112
+msgid "Topic does not belong to user."
+msgstr ""
+
+#: .\chatapi\api.py:114
+msgid "Topic is hidden."
+msgstr ""
+
+#: .\chatapi\api.py:116 .\quizdata\api.py:164
+msgid "Topic is not a subtopic."
+msgstr ""
+
+#: .\quizdata\api.py:25
+msgid "Get the specified question"
+msgstr ""
+
+#: .\quizdata\api.py:32
+msgid "Question does not belong to you."
+msgstr ""
+
+#: .\quizdata\api.py:41
+msgid "Get all answers for the specified question"
+msgstr ""
+
+#: .\quizdata\api.py:147
+msgid "Level must be between 1 and 5."
+msgstr ""
+
+#: .\quizdata\api.py:162
+msgid "Topic does not belong to you."
+msgstr ""
+
+#: .\quizdata\models.py:13
+msgid "Beginner"
+msgstr ""
+
+#: .\quizdata\models.py:13
+msgid "Intermediate"
+msgstr ""
+
+#: .\quizdata\models.py:13
+msgid "Advanced"
+msgstr ""
+
+#: .\quizdata\models.py:13
+msgid "Expert"
+msgstr ""
+
+#: .\quizdata\models.py:13
+msgid "Master"
+msgstr ""
+
+#: .\quizdata\models.py:16
+msgid "A topic or subtopic of study."
+msgstr ""
+
+#: .\quizdata\models.py:17
+msgid "A brief introduction to the topic."
+msgstr ""
+
+#: .\quizdata\models.py:19
+msgid "Hide from views"
+msgstr ""
+
+#: .\quizdata\models.py:20
+msgid "Owner"
+msgstr ""
+
+#: .\quizdata\models.py:40
+msgid "Multiple Choice"
+msgstr ""
+
+#: .\quizdata\models.py:40
+msgid "Fill in the Blank"
+msgstr ""
+
+#: .\quizdata\models.py:43
+msgid "The question."
+msgstr ""
+
+#: .\quizgpt\settings.py:149
+msgid "English"
+msgstr ""
+
+#: .\quizgpt\settings.py:150
+msgid "Spanish"
+msgstr ""

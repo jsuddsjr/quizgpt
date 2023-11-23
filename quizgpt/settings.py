@@ -11,11 +11,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 # Add .env variables anywhere before SECRET_KEY
-import os
-import dotenv
-
 from django.core.management.commands.runserver import Command as runserver
+from django.utils.translation import gettext_lazy as _
 from pathlib import Path
+
+import dotenv as dotenv
+import os
 
 dotenv.load_dotenv()
 
@@ -143,3 +144,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+LANGUAGES = [
+    ("en", _("English")),
+    ("es", _("Spanish")),
+]
+
+LOCALE_PATHS = [BASE_DIR / "locale"]

@@ -62,7 +62,8 @@
                 "makemessages",
                 "--all",
                 "-e html,py"
-            ]
+            ],
+            "problemMatcher": []
         },
         {
             "label": "command (Django)",
@@ -87,7 +88,7 @@
                 "${input:command}"
             ],
             "group": "test"
-        },
+        }
     ],
     "inputs": [
         {
@@ -100,19 +101,25 @@
             "type": "pickString",
             "description": "Select a command.",
             "options": [
+                "changepassword",
                 "check",
+                "clearsessions",
+                "collectstatic",
                 "compilemessages",
                 "createcachetable",
+                "createsuperuser",
                 "dbshell",
                 "diffsettings",
                 "dumpdata",
+                "findstatic",
                 "flush",
                 "inspectdb",
                 "loaddata",
-                "makemessages",
                 "makemigrations",
                 "migrate",
                 "optimizemigration",
+                "remove_stale_contenttypes",
+                "runserver",
                 "sendtestemail",
                 "shell",
                 "showmigrations",
@@ -124,13 +131,6 @@
                 "startproject",
                 "test",
                 "testserver",
-                "collectstatic",
-                "findstatic",
-                "runserver",
-                "clearsessions",
-                "remove_stale_contenttypes",
-                "changepassword",
-                "createsuperuser",
             ]
         }
     ]

@@ -45,6 +45,8 @@ class PostAnswerResponseSchema(Schema):
     bucket: QuestionBucketSchema
     history: List[AnswerHistorySchema] = []
 
+class GetAnswerResponseSchema(Schema):
+    answers: List[AnswerHistorySchema] = []
 
 class PostTopicSchema(Schema):
     topic: str
@@ -64,9 +66,6 @@ class ErrorMessage(Schema):
     error: str
     data: str = None
 
-
-class PostQuestionSchema(Schema):
-    count: int = 5
 
 
 class PostQuestionResponseSchema(Schema):

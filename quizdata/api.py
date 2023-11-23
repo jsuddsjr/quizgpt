@@ -1,12 +1,15 @@
+from typing import List
+
 from django.http import HttpRequest
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import slugify
+from django.utils.translation import gettext_lazy as _
 
 from ninja import Router
 from ninja.security import django_auth
 
-from chatapi.api import TopicQuestionsResponseSchema, _get_topic_subtopics, _get_topic_questions
+from chatapi.api import _get_topic_subtopics, _get_topic_questions
 
 from .models import *
 from .schema import *
@@ -16,10 +19,36 @@ import json
 router = Router()
 
 
-@router.post(
-    "/ans",
+@router.get(
+    "/question/{qid}",
     auth=django_auth,
-    tags=["quizdata"],
+    summary=_("Get the specified question"),
+    tags=["question"],
+    response={200: QuestionSchema, 403: ErrorMessage, 404: None},
+)
+def get_question(request: HttpRequest, qid: int) -> QuestionSchema:
+    question = get_object_or_404(Question, pk=qid)
+    if (question.topic.user and question.topic.user != request.user) or question.topic.is_hidden:
+        return 403, ErrorMessage(error=_("Question does not belong to you."))
+    return question.get_randomized_choices()
+
+
+## Answer History
+@router.get(
+    "/question/{qid}/answer",
+    auth=django_auth,
+    tags=["question"],
+    summary=_("Get all answers for the specified question"),
+    response={200: GetAnswerResponseSchema},
+)
+def get_answer(request: HttpRequest, qid: int) -> List[AnswerHistorySchema]:
+    return AnswerHistory.objects.filter(user=request.user, choice__question__id=qid)
+
+
+@router.post(
+    "/choice/{cid}/answer",
+    auth=django_auth,
+    tags=["choice"],
     summary="Record an answer in the database",
     response={200: PostAnswerResponseSchema},
 )
@@ -45,10 +74,24 @@ def post_answer(request: HttpRequest, data: PostAnswerSchema) -> PostAnswerRespo
     return PostAnswerResponseSchema(correct=choice.is_correct, bucket=question, history=history)
 
 
-@router.post(
-    "/top",
+@router.delete(
+    "/answer/{cid}",
     auth=django_auth,
-    tags=["quizdata"],
+    tags=["answer"],
+    summary="Delete answers from the database",
+    response={404: None, 403: None, 200: None},
+)
+@transaction.atomic
+def delete_answer(request: HttpRequest, cid: int) -> None:
+    answers = AnswerHistory.objects.filter(user=request.user, choice=cid)
+    [count, deleted] = answers.delete()
+    return 200, f"Deleted {count} records."
+
+
+@router.post(
+    "/topic",
+    auth=django_auth,
+    tags=["topic"],
     summary="Request new subtopics for the specified topic",
     response={200: PostTopicResponseSchema, 400: ErrorMessage},
 )
@@ -80,14 +123,39 @@ def post_topic(request: HttpRequest, data: PostTopicSchema) -> PostTopicResponse
         return 400, ErrorMessage(error=str(e), data=json_str)
 
 
-@router.post(
-    "/top/{slug}/qst",
+@router.get(
+    "/topic",
     auth=django_auth,
-    tags=["quizdata"],
+    tags=["topic"],
+    summary="Get all root topics",
+    response={200: List[TopicSchema]},
+)
+def get_topics(request: HttpRequest) -> List[TopicSchema]:
+    return Topic.objects.filter(user=request.user, subtopic_of=None)
+
+
+@router.get(
+    "/topic/{slug}",
+    auth=django_auth,
+    tags=["topic"],
+    summary="Get all subtopics for the specified topic and (optional) level",
+    response={200: List[TopicSchema], 404: None, 400: ErrorMessage},
+)
+def get_subtopics(request: HttpRequest, slug: str, level: int = None) -> List[TopicSchema]:
+    topic = get_object_or_404(Topic, slug=slug)
+    if level and (level < 1 or level > 5):
+        return 400, ErrorMessage(error=_("Level must be between 1 and 5."))
+    return Topic.objects.filter(user=request.user, subtopic_of=topic, is_hidden=False, topic_level=level)
+
+
+@router.put(
+    "/topic/{slug}",
+    auth=django_auth,
+    tags=["topic"],
     summary="Request new questions for a subtopic",
     response={200: PostQuestionResponseSchema, 400: ErrorMessage},
 )
-def post_question(request: HttpRequest, slug: str, data: PostQuestionSchema):
+def post_question(request: HttpRequest, slug: str, question: str, count: int = 5):
     topic = get_object_or_404(Topic, slug=slug)
 
     if topic.user and topic.user != request.user:
@@ -95,7 +163,7 @@ def post_question(request: HttpRequest, slug: str, data: PostQuestionSchema):
     if topic.subtopic_of is None:
         return 400, ErrorMessage(error=_("Topic is not a subtopic."))
 
-    json_str = _get_topic_questions(topic.subtopic_of.topic_text, topic.topic_text, topic.topic_level, data.count)
+    json_str = _get_topic_questions(topic.subtopic_of.topic_text, topic.topic_text, topic.topic_level, count)
 
     try:
         records = json.loads(json_str)
@@ -114,9 +182,9 @@ def _process_question(topic: Topic, user: User, data: dict) -> int:
     bucket.save()
 
     answer_index = dict["answer_index"]
-    for index, ans in enumerate(data["answers"]):
+    for index, answer in enumerate(data["answers"]):
         choice = Choice.objects.create(
-            choice_text=ans,
+            choice_text=answer,
             question=question,
             order=index,
         )

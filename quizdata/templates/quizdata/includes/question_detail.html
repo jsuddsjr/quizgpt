@@ -8,7 +8,7 @@
   </div>
   <div class="card-body">
     <h5 class="card-title">{{ q.question_text }}</h5>
-    <form method="post" data-action="/api/quizdata/ans">
+    <form method="post" data-action="/api/quizdata/answer">
       <div class="btn-group btn-group-toggle btn-group-lg btn-group-vertical w-100" data-toggle="buttons">
         {% for c in q.get_randomized_choices %}
           <label class="btn btn-outline-primary py-3"><input type="checkbox" value="{{ c.id }}" autocomplete="off" />{{ c }}</label>
