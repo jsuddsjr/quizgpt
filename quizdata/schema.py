@@ -8,6 +8,7 @@ class TopicSchema(ModelSchema):
         model = Topic
         model_fields = "__all__"
         model_fields_optional = ["id", "subtopic_of", "description"]
+        model_exclude = ["user"]
 
 
 class QuestionSchema(ModelSchema):
@@ -45,8 +46,10 @@ class PostAnswerResponseSchema(Schema):
     bucket: QuestionBucketSchema
     history: List[AnswerHistorySchema] = []
 
+
 class GetAnswerResponseSchema(Schema):
     answers: List[AnswerHistorySchema] = []
+
 
 class PostTopicSchema(Schema):
     topic: str
@@ -65,7 +68,6 @@ class PostTopicResponseSchema(Schema):
 class ErrorMessage(Schema):
     error: str
     data: str = None
-
 
 
 class PostQuestionResponseSchema(Schema):

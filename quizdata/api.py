@@ -19,6 +19,92 @@ import json
 router = Router()
 
 
+## Errors
+def TOPIC_DOES_NOT_BELONG_TO_YOU() -> ErrorMessage:
+    ErrorMessage(error=_("Topic does not belong to you."))
+
+
+def LEVEL_MUST_BE_BETWEEN_1_AND_5() -> ErrorMessage:
+    ErrorMessage(error=_("Level must be between 1 and 5."))
+
+
+## Topics
+@router.get(
+    "/topic",
+    auth=django_auth,
+    tags=["topic"],
+    summary="Get all root topics",
+    response={200: List[TopicSchema]},
+)
+def get_topics(request: HttpRequest) -> List[TopicSchema]:
+    return Topic.objects.filter(user=request.user, subtopic_of=None)
+
+
+@router.put(
+    "/topic/{slug}",
+    auth=django_auth,
+    tags=["topic"],
+    summary="Update the specified topic",
+)
+def update_topic(request: HttpRequest, slug: str, data: TopicSchema) -> TopicSchema:
+    topic = get_object_or_404(Topic, slug=slug)
+    if topic.user and topic.user != request.user:
+        return 400, TOPIC_DOES_NOT_BELONG_TO_YOU()
+    if data.user and data.user != request.user:
+        return 400, TOPIC_DOES_NOT_BELONG_TO_YOU()
+    topic.topic_text = data.topic_text
+    topic.description = data.description
+    topic.topic_level = data.topic_level
+    topic.is_hidden = data.is_hidden
+    topic.user = data.user
+    topic.save()
+    return topic
+
+
+@router.get(
+    "/topic/{slug}",
+    auth=django_auth,
+    tags=["topic"],
+    summary="Get all subtopics for the specified topic and (optional) level",
+    response={200: List[TopicSchema], 404: None, 400: ErrorMessage},
+)
+def get_subtopics(request: HttpRequest, slug: str, level: int = 0) -> List[TopicSchema]:
+    topic = get_object_or_404(Topic, slug=slug)
+    if topic.user and topic.user != request.user:
+        return 400, TOPIC_DOES_NOT_BELONG_TO_YOU()
+    if level:
+        if level < 1 or level > 5:
+            return 400, LEVEL_MUST_BE_BETWEEN_1_AND_5()
+        return Topic.objects.filter(user=request.user, subtopic_of=topic, topic_level=level, is_hidden=False)
+    else:
+        return Topic.objects.filter(user=request.user, subtopic_of=topic, is_hidden=False)
+
+
+@router.put(
+    "/topic/{slug}",
+    auth=django_auth,
+    tags=["topic"],
+    summary="Request new questions for a subtopic",
+    response={200: PostQuestionResponseSchema, 400: ErrorMessage},
+)
+def post_question(request: HttpRequest, slug: str, question: str, count: int = 5):
+    topic = get_object_or_404(Topic, slug=slug)
+
+    if topic.user and topic.user != request.user:
+        return 400, TOPIC_DOES_NOT_BELONG_TO_YOU()
+    if topic.subtopic_of is None:
+        return 400, ErrorMessage(error=_("Topic is not a subtopic."))
+
+    json_str = _get_topic_questions(topic.subtopic_of.topic_text, topic.topic_text, topic.topic_level, count)
+
+    try:
+        records = json.loads(json_str)
+        question_ids = list(map(lambda row: _process_question(topic, request.user, row), records))
+        return PostQuestionResponseSchema(topic_id=topic.id, questions=question_ids)
+    except Exception as e:
+        return 400, ErrorMessage(error=str(e), data=json_str)
+
+
 @router.get(
     "/question/{qid}",
     auth=django_auth,
@@ -119,56 +205,6 @@ def post_topic(request: HttpRequest, data: PostTopicSchema) -> PostTopicResponse
             subtopic.save()
         response = PostTopicResponseSchema(topic=topic, subtopics=Topic.objects.filter(subtopic_of=topic))
         return response
-    except Exception as e:
-        return 400, ErrorMessage(error=str(e), data=json_str)
-
-
-@router.get(
-    "/topic",
-    auth=django_auth,
-    tags=["topic"],
-    summary="Get all root topics",
-    response={200: List[TopicSchema]},
-)
-def get_topics(request: HttpRequest) -> List[TopicSchema]:
-    return Topic.objects.filter(user=request.user, subtopic_of=None)
-
-
-@router.get(
-    "/topic/{slug}",
-    auth=django_auth,
-    tags=["topic"],
-    summary="Get all subtopics for the specified topic and (optional) level",
-    response={200: List[TopicSchema], 404: None, 400: ErrorMessage},
-)
-def get_subtopics(request: HttpRequest, slug: str, level: int = None) -> List[TopicSchema]:
-    topic = get_object_or_404(Topic, slug=slug)
-    if level and (level < 1 or level > 5):
-        return 400, ErrorMessage(error=_("Level must be between 1 and 5."))
-    return Topic.objects.filter(user=request.user, subtopic_of=topic, is_hidden=False, topic_level=level)
-
-
-@router.put(
-    "/topic/{slug}",
-    auth=django_auth,
-    tags=["topic"],
-    summary="Request new questions for a subtopic",
-    response={200: PostQuestionResponseSchema, 400: ErrorMessage},
-)
-def post_question(request: HttpRequest, slug: str, question: str, count: int = 5):
-    topic = get_object_or_404(Topic, slug=slug)
-
-    if topic.user and topic.user != request.user:
-        return 400, ErrorMessage(error=_("Topic does not belong to you."))
-    if topic.subtopic_of is None:
-        return 400, ErrorMessage(error=_("Topic is not a subtopic."))
-
-    json_str = _get_topic_questions(topic.subtopic_of.topic_text, topic.topic_text, topic.topic_level, count)
-
-    try:
-        records = json.loads(json_str)
-        question_ids = list(map(lambda row: _process_question(topic, request.user, row), records))
-        return PostQuestionResponseSchema(topic_id=topic.id, questions=question_ids)
     except Exception as e:
         return 400, ErrorMessage(error=str(e), data=json_str)
 
