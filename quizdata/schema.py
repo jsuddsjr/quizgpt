@@ -1,40 +1,67 @@
-from ninja import Schema, ModelSchema
-from typing import List
+from ninja import Field, Schema, ModelSchema
+from typing import List, Optional
 from .models import Topic, Question, Choice, QuestionBucket, AnswerHistory
 
 
-class TopicSchema(ModelSchema):
-    class Config:
-        model = Topic
-        model_fields = "__all__"
-        model_fields_optional = ["id", "subtopic_of", "description"]
-        model_exclude = ["user"]
+class ChoiceSchema(ModelSchema):
+    class Meta:
+        model = Choice
+        fields = "__all__"
+        fields_optional = ["id"]
 
 
 class QuestionSchema(ModelSchema):
-    class Config:
+    choices: List[ChoiceSchema] = Field(None, alias="choice_set")
+
+    class Meta:
         model = Question
-        model_fields = "__all__"
-        model_fields_optional = ["id", "is_suppressed"]
+        fields = "__all__"
+        fields_optional = ["id", "is_suppressed"]
 
 
-class ChoiceSchema(ModelSchema):
-    class Config:
+class TopicSchema(ModelSchema):
+    questions: List[ChoiceSchema] = Field(None, alias="question_set")
+
+    class Meta:
+        model = Topic
+        fields = "__all__"
+        fields_optional = ["id", "subtopic_of", "description"]
+
+
+class ChoiceSchemaUpdate(ModelSchema):
+    class Meta:
         model = Choice
-        model_fields = "__all__"
-        model_fields_optional = ["id"]
+        fields = "__all__"
+        fields_optional = ["order", "is_correct"]
+        exclude = ["id", "question", "created", "modified"]
+
+
+class QuestionSchemaUpdate(ModelSchema):
+    class Meta:
+        model = Question
+        fields = "__all__"
+        fields_optional = ["is_suppressed", "choice_set"]
+        exclude = ["id", "topic", "created", "modified"]
+
+
+class TopicSchemaUpdate(ModelSchema):
+    class Meta:
+        model = Topic
+        fields = "__all__"
+        fields_optional = ["subtopic_of", "description", "questions"]
+        exclude = ["id", "slug", "user", "created", "modified"]
 
 
 class QuestionBucketSchema(ModelSchema):
-    class Config:
+    class Meta:
         model = QuestionBucket
-        model_exclude = ["id"]
+        exclude = ["id"]
 
 
 class AnswerHistorySchema(ModelSchema):
-    class Config:
+    class Meta:
         model = AnswerHistory
-        model_exclude = ["id"]
+        exclude = ["id"]
 
 
 class PostAnswerSchema(Schema):
@@ -51,13 +78,16 @@ class GetAnswerResponseSchema(Schema):
     answers: List[AnswerHistorySchema] = []
 
 
-class PostTopicSchema(Schema):
-    topic: str
-    slug: str = ""
-    subtopic_of: str = ""
-    type: str = ""
-    level: int = 0
-    count: int = 5
+class SuggestTopicQuerySchema(Schema):
+    type: Optional[str] = "features or subtopics"
+    level: Optional[int] = 0
+    count: Optional[int] = 5
+
+
+class SuggestQuestionResponseSchema(Schema):
+    question: str
+    answers: List[str]
+    answer_index: int
 
 
 class PostTopicResponseSchema(Schema):
@@ -67,9 +97,4 @@ class PostTopicResponseSchema(Schema):
 
 class ErrorMessage(Schema):
     error: str
-    data: str = None
-
-
-class PostQuestionResponseSchema(Schema):
-    topic_id: int
-    questions: List[int] = []
+    data: Optional[str] = None

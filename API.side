@@ -1,0 +1,297 @@
+fire{
+  "id": "9a5f4550-b392-44c8-b687-5acdc9a2ba6d",
+  "version": "2.0",
+  "name": "API",
+  "url": "http://127.0.0.1:3000",
+  "tests": [{
+    "id": "34fcdd53-3583-45d5-84e2-1f018af60558",
+    "name": "/api/me",
+    "commands": [{
+      "id": "63968189-6593-4dec-b1d5-57b5c60045ce",
+      "comment": "",
+      "command": "open",
+      "target": "/api/docs",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "b90d4ca5-e1d5-41ef-b530-43908e79533e",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1918x1032",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "96cf8480-e915-442d-9450-88b66fadad94",
+      "comment": "",
+      "command": "click",
+      "target": "css=#operations-user-quizgpt_api_me .opblock-summary-control use",
+      "targets": [
+        ["css=#operations-user-quizgpt_api_me .opblock-summary-control use", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "a491b973-4e84-4321-99ed-c90cbd2efbc0",
+      "comment": "",
+      "command": "click",
+      "target": "css=.try-out__btn",
+      "targets": [
+        ["css=.try-out__btn", "css:finder"],
+        ["xpath=//div[@id='operations-user-quizgpt_api_me']/div[2]/div/div/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Try it out')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "42c09df1-b859-42b2-8841-2609babc4c38",
+      "comment": "",
+      "command": "click",
+      "target": "css=.execute",
+      "targets": [
+        ["css=.execute", "css:finder"],
+        ["xpath=//div[@id='operations-user-quizgpt_api_me']/div[2]/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Execute')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "52f6a5df-955b-4fe8-9a86-1ecca37bf222",
+      "comment": "",
+      "command": "storeText",
+      "target": "css=.microlight:nth-child(3)",
+      "targets": [
+        ["css=.microlight:nth-child(3)", "css:finder"],
+        ["xpath=//div[@id='operations-user-quizgpt_api_me']/div[2]/div/div[3]/div[2]/div/div/table/tbody/tr/td[2]/div/div/pre", "xpath:idRelative"],
+        ["xpath=//td[2]/div/div/pre", "xpath:position"],
+        ["xpath=//pre[contains(.,'{\n  \"id\": 1,\n  \"is_superuser\": true,\n  \"username\": \"jsuddsjr\",\n  \"first_name\": \"\",\n  \"last_name\": \"\",\n  \"email\": \"\",\n  \"is_staff\": true,\n  \"is_active\": true,\n  \"date_joined\": \"2023-09-30T21:24:17.499Z\",\n  \"groups\": []\n}')]", "xpath:innerText"]
+      ],
+      "value": "response"
+    }, {
+      "id": "b6fa966e-9a2c-4de5-87d5-aa9f0717dd70",
+      "comment": "",
+      "command": "echo",
+      "target": "${response}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "740d3387-a522-4c8c-a069-8f45c173d090",
+      "comment": "",
+      "command": "storeJson",
+      "target": "${response}",
+      "targets": [],
+      "value": "user"
+    }, {
+      "id": "0245ab7b-fb19-433f-a9bc-a52dcbeec52e",
+      "comment": "",
+      "command": "echo",
+      "target": "${user.username}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c2a45bcc-e7fa-4a2a-a315-d59ce424739d",
+      "comment": "",
+      "command": "assert",
+      "target": "user.username",
+      "targets": [],
+      "value": "jsuddsjr"
+    }]
+  }, {
+    "id": "4a0cf261-23c7-4a09-999d-69c8dc09bd49",
+    "name": "/api/quizdata/topic",
+    "commands": [{
+      "id": "7c692d76-309a-4287-a64e-be7872949645",
+      "comment": "",
+      "command": "open",
+      "target": "/review/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "41913510-c3b0-49bc-bf6e-12829ea5855e",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1918x1032",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "8a9403fc-c353-4360-b704-f6f55cc90e85",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Docs",
+      "targets": [
+        ["linkText=Docs", "linkText"],
+        ["css=.nav-item:nth-child(6) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'Docs')]", "xpath:link"],
+        ["xpath=//div[@id='my-nav']/ul/li[6]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/api/docs')]", "xpath:href"],
+        ["xpath=//li[6]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Docs')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9e8cfdea-3fcf-433d-8f6f-135ef19660c4",
+      "comment": "",
+      "command": "click",
+      "target": "css=#operations-topic-quizdata_api_get_topics .opblock-summary-path span",
+      "targets": [
+        ["css=#operations-topic-quizdata_api_get_topics .opblock-summary-path span", "css:finder"],
+        ["xpath=//div[@id='operations-topic-quizdata_api_get_topics']/div/button/span[2]/a/span", "xpath:idRelative"],
+        ["xpath=//span[2]/div/div/div/span/div/div/button/span[2]/a/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "f462d7dc-f79d-49dc-9a7a-83971c769a54",
+      "comment": "",
+      "command": "click",
+      "target": "css=.try-out__btn",
+      "targets": [
+        ["css=.try-out__btn", "css:finder"],
+        ["xpath=//div[@id='operations-topic-quizdata_api_get_topics']/div[2]/div/div/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Try it out')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "be5fe7b0-92de-43f2-8e21-821fde097bc3",
+      "comment": "",
+      "command": "click",
+      "target": "css=.execute",
+      "targets": [
+        ["css=.execute", "css:finder"],
+        ["xpath=//div[@id='operations-topic-quizdata_api_get_topics']/div[2]/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Execute')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "1e47def1-5928-4470-8e97-9e2d75d0e08b",
+      "comment": "",
+      "command": "storeText",
+      "target": "css=.microlight:nth-child(3)",
+      "targets": [],
+      "value": "response"
+    }, {
+      "id": "20bbe64b-9460-4d5c-b610-9d0b564461af",
+      "comment": "",
+      "command": "echo",
+      "target": "${response}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "9d324795-ca7e-430c-b71a-6d37a13f2697",
+      "comment": "",
+      "command": "storeJson",
+      "target": "${response}",
+      "targets": [],
+      "value": "topics"
+    }, {
+      "id": "fc30edda-3d8d-45e2-8904-ce346d693e55",
+      "comment": "",
+      "command": "store",
+      "target": "${topics[0].slug}",
+      "targets": [],
+      "value": "slug"
+    }]
+  }, {
+    "id": "bdc58744-579c-447a-8bf7-4e562b2fa60b",
+    "name": "/api/quizdata/topic/slug",
+    "commands": [{
+      "id": "06964be9-d2b5-4119-842f-ff41cc4569e4",
+      "comment": "",
+      "command": "store",
+      "target": "vue-2-jsuddsjr",
+      "targets": [],
+      "value": "slug"
+    }, {
+      "id": "f936bd5b-eb9f-45f6-8394-5d2627d53b29",
+      "comment": "",
+      "command": "echo",
+      "target": "${slug}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "0838a4e5-edfd-4cba-bee5-9c425798e73c",
+      "comment": "",
+      "command": "open",
+      "target": "/api/docs",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "08528581-f510-45fd-b377-ff374bb96d55",
+      "comment": "",
+      "command": "click",
+      "target": "css=#operations-topic-quizdata_api_get_subtopics .opblock-summary-control",
+      "targets": [
+        ["css=#operations-topic-quizdata_api_get_subtopics .opblock-summary-control", "css:finder"],
+        ["xpath=//div[@id='operations-topic-quizdata_api_get_subtopics']/div/button", "xpath:idRelative"],
+        ["xpath=//span[3]/div/div/button", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "a9c0962b-3d6d-444d-a8fc-dffdc9c7baf2",
+      "comment": "",
+      "command": "click",
+      "target": "css=.try-out__btn",
+      "targets": [
+        ["css=.try-out__btn", "css:finder"],
+        ["xpath=//div[@id='operations-topic-quizdata_api_get_subtopics']/div[2]/div/div/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Try it out')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "588e7a6d-b861-4d10-b898-a27518aa7279",
+      "comment": "",
+      "command": "type",
+      "target": "css=tr:nth-child(1) input",
+      "targets": [
+        ["css=tr:nth-child(1) input", "css:finder"],
+        ["xpath=//input[@value='vue-2-jsuddsjr']", "xpath:attributes"],
+        ["xpath=//div[@id='operations-topic-quizdata_api_get_subtopics']/div[2]/div/div/div[2]/div/table/tbody/tr/td[2]/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "${slug}"
+    }, {
+      "id": "389bcaac-fc70-48b9-8847-b8b06a4e6414",
+      "comment": "",
+      "command": "click",
+      "target": "css=.execute",
+      "targets": [
+        ["css=.execute", "css:finder"],
+        ["xpath=//div[@id='operations-topic-quizdata_api_get_subtopics']/div[2]/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Execute')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "5f1c6f1f-937b-4b21-893a-4b124383a3b0",
+      "comment": "",
+      "command": "storeText",
+      "target": "css=.microlight:nth-child(3)",
+      "targets": [],
+      "value": "response"
+    }, {
+      "id": "57b4a40b-3f3b-44ca-8922-9c1c388c5bbe",
+      "comment": "",
+      "command": "storeJson",
+      "target": "${response}",
+      "targets": [],
+      "value": "subtopics"
+    }, {
+      "id": "affa2f3d-5b9f-40f7-bdd9-6b3d2ec0c4c2",
+      "comment": "",
+      "command": "store",
+      "target": "${subtopics[0].slug}",
+      "targets": [],
+      "value": "subslug"
+    }]
+  }],
+  "suites": [{
+    "id": "11f42107-ad86-4a16-8f20-299dd7868458",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["34fcdd53-3583-45d5-84e2-1f018af60558", "4a0cf261-23c7-4a09-999d-69c8dc09bd49", "bdc58744-579c-447a-8bf7-4e562b2fa60b"]
+  }],
+  "urls": ["http://127.0.0.1:3000/"],
+  "plugins": []
+}
