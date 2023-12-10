@@ -1,13 +1,15 @@
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
+from django.shortcuts import redirect
+from django.utils.translation import gettext_lazy as _
 from ninja import NinjaAPI, ModelSchema, Schema, Path
+from ninja.security import django_auth, django_auth_superuser
 
 from quizdata.api import router as quizdata_router
 from chatapi.api import router as chatapi_router
 
 api = NinjaAPI(
     csrf=True,
-    docs_decorator=staff_member_required,
     title="QuizGPT API",
     version="0.1.0",
     urls_namespace="quizgpt",
@@ -18,7 +20,7 @@ api.add_router("/chatapi", chatapi_router, tags=["chatapi"])
 
 
 class UserSchema(ModelSchema):
-    class Config:
+    class Meta:
         model = User
         model_exclude = ["password", "last_login", "user_permissions"]
 
@@ -27,15 +29,24 @@ class ErrorSchema(Schema):
     message: str
 
 
-@api.get("/me", tags=["user"], summary="Retrieve the logged in user", response={200: UserSchema, 403: ErrorSchema})
+@api.get(
+    "/me",
+    auth=django_auth,
+    tags=["user"],
+    summary=_("Retrieve the logged in user"),
+    response={200: UserSchema, 403: ErrorSchema}
+)
 def me(request):
     if not request.user.is_authenticated:
-        return 403, {"message": "Please sign in first"}
+        return 403, {"message": _("Please sign in first")}
     return request.user
 
-
 @api.post(
-    "/user", tags=["user"], summary="Add a new user to the database", response={200: UserSchema, 403: ErrorSchema}
+    "/user",
+    auth=django_auth_superuser,
+    tags=["user"],
+    summary=_("Add a new user to the database"),
+    response={200: UserSchema, 403: ErrorSchema}
 )
 def create_user(request, user: UserSchema):
     try:
