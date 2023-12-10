@@ -5,6 +5,7 @@
     "python.testing.pytestEnabled": true,
     "cSpell.words": [
         "chatapi",
+        "corsheaders",
         "dotenv",
         "jsuddsjr",
         "Leitner",

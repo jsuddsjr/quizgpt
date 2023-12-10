@@ -22,7 +22,7 @@ api.add_router("/chatapi", chatapi_router, tags=["chatapi"])
 class UserSchema(ModelSchema):
     class Meta:
         model = User
-        model_exclude = ["password", "last_login", "user_permissions"]
+        exclude = ["password", "last_login", "user_permissions"]
 
 
 class ErrorSchema(Schema):

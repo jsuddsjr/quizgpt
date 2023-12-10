@@ -233,7 +233,7 @@ def update_question(request: HttpRequest, qid: int, data: QuestionSchemaUpdate):
 
 
 @router.post(
-    "/choice/{cid}/answer",
+    "/choice/answer",
     auth=django_auth,
     tags=["choice"],
     summary="Record an answer in the database",
